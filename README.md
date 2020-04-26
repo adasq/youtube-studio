@@ -9,7 +9,11 @@ Already, you can set monetisation for your video via this package.
 ## Features
 - setting monetisation for your videos
 
+## Installation
 
+```sh
+$ npm i -SE youtube-studio
+```
 
 ## Setting monetisation
 
