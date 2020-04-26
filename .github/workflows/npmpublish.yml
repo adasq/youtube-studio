@@ -17,6 +17,10 @@ jobs:
           node-version: 13
       - run: npm ci
       - run: npm test
+        env:
+          VIDEO_ID: ${{ secrets.VIDEO_ID }}
+          LESS_THAN_10MIN_VIDEO_ID: ${{ secrets.LESS_THAN_10MIN_VIDEO_ID }}
+          GOOGLE_COOKIE: ${{ secrets.GOOGLE_COOKIE }}
 
   publish-npm:
     needs: build
