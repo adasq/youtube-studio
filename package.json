@@ -1,0 +1,35 @@
+{
+  "name": "youtube-studio",
+  "version": "0.0.1",
+  "description": "Unofficial YouTube Studio API",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adasq/youtube-studio.git"
+  },
+  "author": "adasq",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adasq/youtube-studio/issues"
+  },
+  "homepage": "https://github.com/adasq/youtube-studio#readme",
+  "jest": {
+    "testMatch": [
+      "**/**.spec.js"
+    ]
+  },
+  "dependencies": {
+    "cheerio": "1.0.0-rc.3",
+    "lodash": "4.17.15",
+    "nconf": "0.10.0",
+    "node-fetch": "2.6.0",
+    "sha1": "1.1.1",
+    "vm2": "3.9.1"
+  },
+  "devDependencies": {
+    "jest": "25.4.0"
+  }
+}
