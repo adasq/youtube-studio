@@ -1,8 +1,11 @@
 # youtube-studio
+[![NPM Downloads](https://img.shields.io/npm/dm/youtube-studio.svg?style=flat)](https://www.npmjs.org/package/youtube-studio)
+[![NPM Downloads](https://img.shields.io/npm/dt/youtube-studio.svg?style=flat)](https://www.npmjs.org/package/youtube-studio)
 
-Unofficial YouTube Studio API. 
-It is a set of features not included into official Youtube API. 
-Already, you can set monetisation for your video via this package.
+
+Unofficial YouTube Studio API.
+It is a set of features not provided by official Youtube API. 
+Already, **you can set monetisation** for your video via the package.
 
 **BEWARE: API will change during upcomming releases**
 
