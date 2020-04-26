@@ -1,5 +1,8 @@
 # youtube-studio
-Unofficial YouTube Studio API
+
+Unofficial YouTube Studio API. 
+It is a set of features not included into official Youtube API. 
+Already, you can set monetisation for your video via this package.
 
 **BEWARE: API will change during upcomming releases**
 
