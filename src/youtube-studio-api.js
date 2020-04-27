@@ -150,6 +150,119 @@ async function getVideo(videoId) {
         .then(res => res.json())
 }
 
+
+const POSITION_TOP_LEFT = {
+    "left": 0.022807017,
+    "top": 0.13084112,
+}
+
+const POSITION_TOP_RIGHT = {
+    "left": 0.654386,
+    "top": 0.13084112
+}
+
+const POSITION_BOTTOM_LEFT = {
+    "left": 0.022807017,
+    "top": 0.5261202368979774,
+}
+
+const POSITION_BOTTOM_RIGHT = {
+    "left": 0.654386,
+    "top": 0.5261202368979774
+}
+
+const DELAY = (offset) => ({
+    offsetMs: offset,
+    durationMs: 20000 - offset
+})
+
+const BOUNDRIES = {
+    "aspectRatio": 1.7777777777777777,
+    "width": 0.32280701754385965,
+};
+
+const TYPE_RECENT_UPLOAD = {
+    "videoEndscreenElement": {
+        "videoType": "VIDEO_TYPE_RECENT_UPLOAD"
+    }
+}
+
+const TYPE_BEST_FOR_VIEWERS = {
+    "videoEndscreenElement": {
+        "videoType": "VIDEO_TYPE_BEST_FOR_VIEWER"
+    }
+}
+
+const endScreen = {
+    POSITION_TOP_LEFT,
+    POSITION_TOP_RIGHT,
+    POSITION_BOTTOM_LEFT,
+    POSITION_BOTTOM_RIGHT,
+    DELAY,
+    TYPE_RECENT_UPLOAD,
+    TYPE_BEST_FOR_VIEWERS
+}
+
+const DEFAULT_ELEMENT = {
+    ...BOUNDRIES,
+    ...POSITION_TOP_LEFT,
+    ...DELAY(0),
+    ...TYPE_RECENT_UPLOAD
+}
+
+async function setEndScreen(videoId, startMs, elements = []) {
+    const template = edit_video_template;
+
+    const extendedElements = elements.map(element => ({
+        ...DEFAULT_ELEMENT,
+        ...element
+    }))
+
+    _.set(template, 'endscreenEdit.endscreen.startMs', startMs);
+    _.set(template, 'endscreenEdit.endscreen.elements', extendedElements);
+
+    _.set(template, 'externalVideoId', videoId);
+    _.set(template, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
+    
+    return fetch(`https://studio.youtube.com/youtubei/v1/video_editor/edit_video?alt=json&key=${config.INNERTUBE_API_KEY}`, {
+        method: 'POST',
+        headers,
+        body: `${JSON.stringify(template)}`
+    })
+        .then(res => res.json())
+}
+
+const edit_video_template = {
+    "endscreenEdit": {
+        "endscreen": {
+            "responseStatus": {
+                "statusCode": "CREATOR_ENTITY_STATUS_OK"
+            },
+            "encryptedVideoId": "xf7HDKDYWQU",
+            "startMs": IT_WILL_BE_SET_DURING_REQUEST_BUILD,
+            "elements": IT_WILL_BE_SET_DURING_REQUEST_BUILD
+        }
+    },
+    "externalVideoId": IT_WILL_BE_SET_DURING_REQUEST_BUILD,
+    "context": {
+        "client": {
+            "clientName": 62,
+            "clientVersion": "1.20191120.0.1",
+            "hl": "en-GB",
+            "gl": "PL",
+            "experimentsToken": ""
+        },
+        "request": {
+            "returnLogEntry": true,
+            "internalExperimentFlags": [
+            ]
+        },
+        "user": {
+            "onBehalfOfUser": IT_WILL_BE_SET_DURING_REQUEST_BUILD
+        }
+    }
+}
+
 const metadata_update_request_payload = {
     "encryptedVideoId": IT_WILL_BE_SET_DURING_REQUEST_BUILD,
     "monetizationSettings": {
@@ -244,5 +357,7 @@ module.exports = {
     init,
     getVideo,
     setMonetisation,
+    setEndScreen,
+    endScreen,
     getDebugInfo
 }

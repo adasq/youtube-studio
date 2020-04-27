@@ -1,7 +1,7 @@
 jest.requireActual('node-fetch')
 const nconf = require('nconf')
 
-const { setMonetisation, init, getVideo } = require('./youtube-studio-api');
+const { setMonetisation, init, getVideo, setEndScreen, endScreen } = require('./youtube-studio-api');
 
 nconf.env().file({ file: './config.json' });
 
@@ -54,5 +54,19 @@ describe('for authenticated user', () => {
         const result = await getVideo(VIDEO_ID)
 
         expect(result.videos[0].videoId).toEqual(VIDEO_ID)
+    })
+
+    describe('end screen', () => {
+        it('should set end screen', async () => {
+            const videoLengthSec = 1404;
+            const TWENTY_SEC_BEFORE_END_MS = (videoLengthSec - 20) * 1000
+
+            result = await setEndScreen(VIDEO_ID, TWENTY_SEC_BEFORE_END_MS, [
+                { ...endScreen.TYPE_RECENT_UPLOAD },
+                { ...endScreen.POSITION_BOTTOM_RIGHT, ...endScreen.TYPE_BEST_FOR_VIEWERS, ...endScreen.DELAY(500) }
+            ]);
+
+            expect(result.executionStatus).toEqual('EDIT_EXECUTION_STATUS_DONE')
+        });
     })
 })
