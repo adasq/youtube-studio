@@ -193,6 +193,22 @@ const TYPE_BEST_FOR_VIEWERS = {
     }
 }
 
+const TYPE_PLAYLIST = (playlistId) => ({
+    playlistEndscreenElement: {
+        playlistId: playlistId
+    }
+})
+
+
+const TYPE_SUBSCRIBE = () => ({
+    width: 0.15438597000000004,
+    channelEndscreenElement: {
+        channelId: "UCqG93OcM0MV6zbhiAHtKVAg", 
+        isSubscribe: true,
+        metadata: "asd"
+    }
+})
+
 const endScreen = {
     POSITION_TOP_LEFT,
     POSITION_TOP_RIGHT,
@@ -200,14 +216,15 @@ const endScreen = {
     POSITION_BOTTOM_RIGHT,
     DELAY,
     TYPE_RECENT_UPLOAD,
-    TYPE_BEST_FOR_VIEWERS
+    TYPE_BEST_FOR_VIEWERS,
+    TYPE_PLAYLIST,
+    TYPE_SUBSCRIBE
 }
 
 const DEFAULT_ELEMENT = {
     ...BOUNDRIES,
     ...POSITION_TOP_LEFT,
-    ...DELAY(0),
-    ...TYPE_RECENT_UPLOAD
+    ...DELAY(0)
 }
 
 async function setEndScreen(videoId, startMs, elements = []) {
