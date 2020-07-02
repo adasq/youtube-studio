@@ -21,6 +21,8 @@ const LESS_THAN_10MIN_VIDEO_ID = nconf.get('LESS_THAN_10MIN_VIDEO_ID');
 
 
 describe('for authenticated user', () => {
+    jest.setTimeout(4 * 60 * 1000);
+
     beforeAll(async () => {
         await init({
             SID,
@@ -116,7 +118,7 @@ describe('for authenticated user', () => {
                 { ...endScreen.POSITION_BOTTOM_LEFT,  ...endScreen.TYPE_PLAYLIST(PLAYLIST_ID), ...endScreen.DELAY(1000) }
             ]);
 
-            console.log(result)
+            // console.log(result)
 
             expect(result.executionStatus).toEqual('EDIT_EXECUTION_STATUS_DONE')
         });
