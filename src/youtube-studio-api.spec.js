@@ -1,7 +1,7 @@
 jest.requireActual('node-fetch')
 const nconf = require('nconf')
 
-const { setMonetisation, init, getVideo } = require('./youtube-studio-api');
+const { setMonetisation, init, getVideo, setEndScreen, endScreen } = require('./youtube-studio-api');
 
 nconf.env().file({ file: './config.json' });
 
@@ -13,10 +13,16 @@ const {
     SAPISID,
 } = JSON.parse(nconf.get('GOOGLE_COOKIE'))
 
+
 const VIDEO_ID = nconf.get('VIDEO_ID')
+const PLAYLIST_ID = nconf.get('PLAYLIST_ID')
+const CHANNEL_ID = nconf.get('CHANNEL_ID')
 const LESS_THAN_10MIN_VIDEO_ID = nconf.get('LESS_THAN_10MIN_VIDEO_ID');
 
+
 describe('for authenticated user', () => {
+    jest.setTimeout(4 * 60 * 1000);
+
     beforeAll(async () => {
         await init({
             SID,
@@ -98,5 +104,23 @@ describe('for authenticated user', () => {
         expect(video.status).toEqual("VIDEO_STATUS_PROCESSED")
         expect(video.lengthSeconds).toEqual("1404")
         expect(video.watchUrl).toEqual("https://youtu.be/" + VIDEO_ID)
+    })
+
+    describe('end screen', () => {
+        it('should set end screen', async () => {
+            const videoLengthSec = 1404;
+            const TWENTY_SEC_BEFORE_END_MS = (videoLengthSec - 20) * 1000
+
+            const result = await setEndScreen(VIDEO_ID, TWENTY_SEC_BEFORE_END_MS, [
+                { ...endScreen.TYPE_RECENT_UPLOAD },
+                { ...endScreen.POSITION_BOTTOM_RIGHT, ...endScreen.TYPE_SUBSCRIBE(CHANNEL_ID) },
+                { ...endScreen.POSITION_TOP_RIGHT,    ...endScreen.TYPE_BEST_FOR_VIEWERS,      ...endScreen.DELAY(500) },
+                { ...endScreen.POSITION_BOTTOM_LEFT,  ...endScreen.TYPE_PLAYLIST(PLAYLIST_ID), ...endScreen.DELAY(1000) }
+            ]);
+
+            // console.log(result)
+
+            expect(result.executionStatus).toEqual('EDIT_EXECUTION_STATUS_DONE')
+        });
     })
 })
