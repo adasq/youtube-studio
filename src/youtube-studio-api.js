@@ -366,7 +366,9 @@ const get_creator_videos_template = {
         },
         "responseStatus": {
             "all": true
-        }
+        },
+        "monetization": {"all": true},
+        "visibility": {"all": true}
     }
 }
 

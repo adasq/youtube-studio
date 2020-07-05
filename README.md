@@ -10,7 +10,9 @@ Already, **you can set monetisation** for your video via the package.
 **BEWARE: API will change during upcomming releases**
 
 ## Features
-- setting monetisation for your videos
+- setting monetisation
+- setting endscreen
+- getting video details
 
 ## Installation
 
@@ -67,6 +69,23 @@ const result = await setEndScreen(VIDEO_ID, TWENTY_SEC_BEFORE_END_MS, [
 ])
     
 console.log(result)
+```
+
+## Getting video details
+
+```js
+const { init, setEndScreen, endScreen } = require('youtube-studio');
+
+await init({ ... }) // read more below (Preparing Authentication)
+
+const result = await getVideo(VIDEO_ID)
+
+const video = result.videos[0];
+
+console.log(video.status) // VIDEO_STATUS_PROCESSED
+console.log(video.monetization.adMonetization.effectiveStatus) // VIDEO_MONETIZING_STATUS_MONETIZING_WITH_LIMITED_ADS
+console.log(video.lengthSeconds) // '1404'
+console.log(video.watchUrl) // '1404'
 ```
 
 ## Preparing Authentication
