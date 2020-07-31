@@ -1,4 +1,5 @@
 # youtube-studio
+![CI](https://github.com/adasq/youtube-studio/workflows/CI/badge.svg)
 [![NPM Downloads](https://img.shields.io/npm/dm/youtube-studio.svg?style=flat)](https://www.npmjs.org/package/youtube-studio)
 [![NPM Downloads](https://img.shields.io/npm/dt/youtube-studio.svg?style=flat)](https://www.npmjs.org/package/youtube-studio)
 
