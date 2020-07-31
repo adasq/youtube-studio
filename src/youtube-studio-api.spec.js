@@ -70,31 +70,6 @@ describe('for authenticated user', () => {
         expect(result.monetizationSettings.success).toEqual(true)
     })
 
-    it('not allow "NonSkippableVideoAds" for videos less than 10min', async () => {
-        const result = await setMonetisation({
-            encryptedVideoId: LESS_THAN_10MIN_VIDEO_ID,
-            monetizationSettings: {
-                newMonetizeWithAds: true
-            },
-            adFormats: {
-                newHasOverlayAds: "ENABLED",
-                // newHasSkippableVideoAds: "ENABLED",
-                newHasNonSkippableVideoAds: "ENABLED",
-                newHasProductListingAds: "ENABLED"
-            },
-            adBreaks: {
-                newHasManualMidrolls: "DISABLED",
-                newHasMidrollAds: "DISABLED",
-                newHasPostrolls: "ENABLED",
-                newHasPrerolls: "DISABLED"
-            },
-        })
-
-        expect(result.adFormats.success).toEqual(true)
-        expect(result.adBreaks.success).toEqual(false)
-        expect(result.overallResult.resultCode).toEqual('UPDATE_SUCCESS')
-    })
-
     it('should get video', async () => {
         const result = await getVideo(VIDEO_ID)
 
