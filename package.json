@@ -1,6 +1,6 @@
 {
   "name": "youtube-studio",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Unofficial YouTube Studio API",
   "main": "index.js",
   "scripts": {
