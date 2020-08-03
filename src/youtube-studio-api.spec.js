@@ -1,7 +1,7 @@
 jest.requireActual('node-fetch')
 const nconf = require('nconf')
 
-const { setMonetisation, init, getVideo, setEndScreen, endScreen } = require('./youtube-studio-api');
+const { setMonetisation, init, getVideo, setEndScreen, getEndScreen, endScreen } = require('./youtube-studio-api');
 
 nconf.env().file({ file: './config.json' });
 
@@ -97,6 +97,17 @@ describe('for authenticated user', () => {
             // console.log(result)
 
             expect(result.executionStatus).toEqual('EDIT_EXECUTION_STATUS_DONE')
+        });
+
+        it('should get end screen', async () => {
+            const result = await getEndScreen(VIDEO_ID);
+
+            const endscreenElements = result.endscreens[0].elements;
+
+            expect(endscreenElements[0].videoEndscreenElement.videoType).toEqual('VIDEO_TYPE_RECENT_UPLOAD')
+            expect(endscreenElements[1].channelEndscreenElement.isSubscribe).toEqual(true)            
+            expect(endscreenElements[2].videoEndscreenElement.videoType).toEqual('VIDEO_TYPE_BEST_FOR_VIEWER')
+            expect(endscreenElements[3].playlistEndscreenElement.playlistId).toEqual(PLAYLIST_ID)
         });
     })
 })

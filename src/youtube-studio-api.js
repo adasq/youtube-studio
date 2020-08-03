@@ -77,8 +77,8 @@ async function getConfig() {
 
     try {
         $ = cheerio.load(text);
-        jsCode = $($('script')[0]).html();        
-    } catch(err) {}
+        jsCode = $($('script')[0]).html();
+    } catch (err) { }
 
     if (!jsCode) {
         throw {
@@ -97,14 +97,14 @@ async function getConfig() {
             sandbox: { window: windowRef }
         });
         vm.run(`${jsCode}; window.ytcfg = ytcfg;`);
-    
+
         fetchConfig = {
             INNERTUBE_API_KEY: windowRef.ytcfg.data_.INNERTUBE_API_KEY,
             DELEGATED_SESSION_ID: windowRef.ytcfg.data_.DELEGATED_SESSION_ID,
         };
-    } catch (err) {}
+    } catch (err) { }
 
-    if(!fetchConfig) {
+    if (!fetchConfig) {
         throw {
             text: 'could not retrive "ytcfg" from given script',
             details: {
@@ -203,7 +203,7 @@ const TYPE_PLAYLIST = (playlistId) => ({
 const TYPE_SUBSCRIBE = () => ({
     width: 0.15438597000000004,
     channelEndscreenElement: {
-        channelId: "UCqG93OcM0MV6zbhiAHtKVAg", 
+        channelId: "UCqG93OcM0MV6zbhiAHtKVAg",
         isSubscribe: true,
         metadata: "asd"
     }
@@ -240,7 +240,7 @@ async function setEndScreen(videoId, startMs, elements = []) {
 
     _.set(template, 'externalVideoId', videoId);
     _.set(template, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
-    
+
     return fetch(`https://studio.youtube.com/youtubei/v1/video_editor/edit_video?alt=json&key=${config.INNERTUBE_API_KEY}`, {
         method: 'POST',
         headers,
@@ -248,6 +248,21 @@ async function setEndScreen(videoId, startMs, elements = []) {
     })
         .then(res => res.json())
 }
+
+async function getEndScreen(videoId) {
+    const template = get_creator_endscreens_template;
+
+    _.set(template, 'encryptedVideoIds', [videoId]);
+    _.set(template, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
+
+    return fetch(`https://studio.youtube.com/youtubei/v1/creator/get_creator_endscreens?alt=json&key=${config.INNERTUBE_API_KEY}`, {
+        method: 'POST',
+        headers,
+        body: `${JSON.stringify(template)}`
+    })
+        .then(res => res.json())
+}
+
 
 const edit_video_template = {
     "endscreenEdit": {
@@ -300,6 +315,44 @@ const metadata_update_request_payload = {
             onBehalfOfUser: IT_WILL_BE_SET_DURING_REQUEST_BUILD
         }
     }
+}
+
+const get_creator_endscreens_template = {
+    "context": {
+        "client": {
+            "clientName": 62,
+            "clientVersion": "1.20200803.00.01",
+            "hl": "en-GB",
+            "gl": "PL",
+            "experimentsToken": ""
+        },
+        "request": {
+            "returnLogEntry": true,
+            "internalExperimentFlags": [
+                {
+                    "key": "force_route_innertube_shopping_settings_to_outertube",
+                    "value": "true"
+                },
+                {
+                    "key": "force_route_delete_playlist_to_outertube",
+                    "value": "false"
+                },
+                {
+                    "key": "force_live_chat_merchandise_upsell",
+                    "value": "false"
+                }
+            ]
+        },
+        "user": {
+            "onBehalfOfUser": IT_WILL_BE_SET_DURING_REQUEST_BUILD,
+            "delegationContext": {
+                "roleType": {
+                    "channelRoleType": "CREATOR_CHANNEL_ROLE_TYPE_OWNER"
+                },
+            },
+        },
+    },
+    "encryptedVideoIds": IT_WILL_BE_SET_DURING_REQUEST_BUILD
 }
 
 const get_creator_videos_template = {
@@ -367,8 +420,8 @@ const get_creator_videos_template = {
         "responseStatus": {
             "all": true
         },
-        "monetization": {"all": true},
-        "visibility": {"all": true}
+        "monetization": { "all": true },
+        "visibility": { "all": true }
     }
 }
 
@@ -377,6 +430,7 @@ module.exports = {
     getVideo,
     setMonetisation,
     setEndScreen,
+    getEndScreen,
     endScreen,
     getDebugInfo
 }

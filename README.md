@@ -12,6 +12,7 @@ It is a set of features not provided by official Youtube API.
 ## Features
 - setting monetisation
 - setting endscreen
+- geting endscreen
 - getting video details
 
 ## Installation
@@ -69,6 +70,18 @@ const result = await setEndScreen(VIDEO_ID, TWENTY_SEC_BEFORE_END_MS, [
 ])
     
 console.log(result)
+```
+
+## Getting endscreen
+
+```js
+const { init, getEndScreen } = require('youtube-studio');
+
+await init({ ... }) // read more below (Preparing Authentication)
+
+const result = await getEndScreen(VIDEO_ID)
+    
+console.log(result.endscreens[0].elements) // see more in unit tests
 ```
 
 ## Getting video details
