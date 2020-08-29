@@ -249,6 +249,38 @@ async function setEndScreen(videoId, startMs, elements = []) {
         .then(res => res.json())
 }
 
+async function setInfoCards(videoId, cards) {
+    const template = _.cloneDeep(edit_video_template)
+
+    _.set(template, 'infoCardEdit.infoCards',
+        cards.map(card => {
+            if (card.playlistId) {
+                const { playlistId, customMessage, teaserText, teaserStartMs } = card;
+                return {
+                    "videoId": videoId,
+                    "teaserStartMs": teaserStartMs || 0,
+                    "playlistInfoCard": {
+                        "fullPlaylistId": playlistId
+                    },
+                    "infoCardEntityId": Date.now().toString(),
+                    "customMessage": customMessage || "custom message",
+                    "teaserText": teaserText || "teaser text"
+                }
+            }
+        }).filter(card => !!card));
+
+    _.set(template, 'endscreenEdit', undefined);
+    _.set(template, 'externalVideoId', videoId);
+    _.set(template, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
+
+    return fetch(`https://studio.youtube.com/youtubei/v1/video_editor/edit_video?alt=json&key=${config.INNERTUBE_API_KEY}`, {
+        method: 'POST',
+        headers,
+        body: `${JSON.stringify(template)}`
+    })
+        .then(res => res.json())
+}
+
 async function getEndScreen(videoId) {
     const template = get_creator_endscreens_template;
 
@@ -432,5 +464,6 @@ module.exports = {
     setEndScreen,
     getEndScreen,
     endScreen,
-    getDebugInfo
+    getDebugInfo,
+    setInfoCards
 }

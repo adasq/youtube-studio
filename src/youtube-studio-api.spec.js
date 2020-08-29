@@ -1,7 +1,7 @@
 jest.requireActual('node-fetch')
 const nconf = require('nconf')
 
-const { setMonetisation, init, getVideo, setEndScreen, getEndScreen, endScreen } = require('./youtube-studio-api');
+const { setMonetisation, init, setInfoCards, getVideo, setEndScreen, getEndScreen, endScreen } = require('./youtube-studio-api');
 
 nconf.env().file({ file: './config.json' });
 
@@ -82,6 +82,21 @@ describe('for authenticated user', () => {
         expect(video.watchUrl).toEqual("https://youtu.be/" + VIDEO_ID)
     })
 
+    describe('info cards', () => {
+        it('should set info cards', async () => {
+            const result = await setInfoCards(VIDEO_ID, [
+                {
+                    playlistId: PLAYLIST_ID,
+                    teaserStartMs: 15000,
+                    customMessage: 'Check this one:',
+                    teaserText: 'If you need more...'
+                }
+            ]);
+
+            expect(result.executionStatus).toEqual('EDIT_EXECUTION_STATUS_DONE')
+        });
+    })
+
     describe('end screen', () => {
         it('should set end screen', async () => {
             const videoLengthSec = 1404;
@@ -90,11 +105,9 @@ describe('for authenticated user', () => {
             const result = await setEndScreen(VIDEO_ID, TWENTY_SEC_BEFORE_END_MS, [
                 { ...endScreen.TYPE_RECENT_UPLOAD },
                 { ...endScreen.POSITION_BOTTOM_RIGHT, ...endScreen.TYPE_SUBSCRIBE(CHANNEL_ID) },
-                { ...endScreen.POSITION_TOP_RIGHT,    ...endScreen.TYPE_BEST_FOR_VIEWERS,      ...endScreen.DELAY(500) },
-                { ...endScreen.POSITION_BOTTOM_LEFT,  ...endScreen.TYPE_PLAYLIST(PLAYLIST_ID), ...endScreen.DELAY(1000) }
+                { ...endScreen.POSITION_TOP_RIGHT, ...endScreen.TYPE_BEST_FOR_VIEWERS, ...endScreen.DELAY(500) },
+                { ...endScreen.POSITION_BOTTOM_LEFT, ...endScreen.TYPE_PLAYLIST(PLAYLIST_ID), ...endScreen.DELAY(1000) }
             ]);
-
-            // console.log(result)
 
             expect(result.executionStatus).toEqual('EDIT_EXECUTION_STATUS_DONE')
         });
@@ -105,7 +118,7 @@ describe('for authenticated user', () => {
             const endscreenElements = result.endscreens[0].elements;
 
             expect(endscreenElements[0].videoEndscreenElement.videoType).toEqual('VIDEO_TYPE_RECENT_UPLOAD')
-            expect(endscreenElements[1].channelEndscreenElement.isSubscribe).toEqual(true)            
+            expect(endscreenElements[1].channelEndscreenElement.isSubscribe).toEqual(true)
             expect(endscreenElements[2].videoEndscreenElement.videoType).toEqual('VIDEO_TYPE_BEST_FOR_VIEWER')
             expect(endscreenElements[3].playlistEndscreenElement.playlistId).toEqual(PLAYLIST_ID)
         });
