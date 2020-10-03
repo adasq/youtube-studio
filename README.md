@@ -14,6 +14,7 @@ It is a set of features not provided by official Youtube API.
 - setting endscreen
 - geting endscreen
 - getting video details
+- setting info cards
 
 ## Installation
 
@@ -100,6 +101,22 @@ console.log(video.monetization.adMonetization.effectiveStatus) // VIDEO_MONETIZI
 console.log(video.lengthSeconds) // '1404'
 console.log(video.watchUrl) // '1404'
 ```
+
+## Setting info cards
+
+```js
+const { init, setInfoCards } = require('youtube-studio');
+
+await init({ ... }) // read more below (Preparing Authentication)
+
+const result = await setInfoCards(VIDEO_ID, [{
+    playlistId: PLAYLIST_ID,
+    teaserStartMs: 15000,
+    customMessage: 'Check this one:',
+    teaserText: 'If you need more...'
+}]);
+```
+
 
 ## Preparing Authentication
 
