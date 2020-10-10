@@ -302,7 +302,7 @@ const edit_video_template = {
             "responseStatus": {
                 "statusCode": "CREATOR_ENTITY_STATUS_OK"
             },
-            "encryptedVideoId": "xf7HDKDYWQU",
+            "encryptedVideoId": IT_WILL_BE_SET_DURING_REQUEST_BUILD,
             "startMs": IT_WILL_BE_SET_DURING_REQUEST_BUILD,
             "elements": IT_WILL_BE_SET_DURING_REQUEST_BUILD
         }
