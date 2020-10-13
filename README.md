@@ -15,6 +15,7 @@ It is a set of features not provided by official Youtube API.
 - geting endscreen
 - getting video details
 - setting info cards
+- getting video claims
 
 ## Installation
 
@@ -117,6 +118,24 @@ const result = await setInfoCards(VIDEO_ID, [{
 }]);
 ```
 
+## Getting video claims
+
+```js
+const { init, getVideoClaims } = require('youtube-studio');
+
+await init({ ... }) // read more below (Preparing Authentication)
+
+const result = await getVideoClaims(CLAIMS_VIDEO_ID);
+            
+const humanizedClaims = result.receivedClaims.map(claim => {
+    const audio = claim.asset.metadata.soundRecording;
+    const timestamp = claim.matchDetails;
+    
+    return `"${audio.title}", by ${audio.artists.join(', ')} (starting at ${timestamp.longestMatchStartTimeSeconds} sec.)`
+})
+
+console.log(humanizedClaims) // ['"Fasl", by Kabul Dreams (starting at 2771 sec.)', ...]
+```
 
 ## Preparing Authentication
 

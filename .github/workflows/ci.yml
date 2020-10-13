@@ -29,6 +29,7 @@ jobs:
         npm test
       env:
         VIDEO_ID: ${{ secrets.VIDEO_ID }}
+        CLAIMS_VIDEO_ID: ${{ secrets.CLAIMS_VIDEO_ID }}
         PLAYLIST_ID: ${{ secrets.PLAYLIST_ID }}
         CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
         LESS_THAN_10MIN_VIDEO_ID: ${{ secrets.LESS_THAN_10MIN_VIDEO_ID }}

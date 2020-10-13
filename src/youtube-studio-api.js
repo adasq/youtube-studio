@@ -135,6 +135,24 @@ async function setMonetisation(monetisationConfig) {
         .then(res => res.json())
 }
 
+
+async function getVideoClaims(videoId) {
+    const template = _.cloneDeep(get_creator_videos_template)
+
+    _.set(template, 'externalVideoId', videoId);
+    _.set(template, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
+    _.set(template, 'videoIds[0]', videoId);
+    _.set(template, 'videoId', videoId);
+    _.set(template, 'criticalRead', false);
+
+    return fetch(`${YT_STUDIO_URL}/youtubei/v1/creator/list_creator_received_claims?alt=json&key=${config.INNERTUBE_API_KEY}`, {
+        method: 'POST',
+        headers,
+        body: `${JSON.stringify(template)}`
+    })
+        .then(res => res.json())
+}
+
 async function getVideo(videoId) {
     const template = get_creator_videos_template;
 
@@ -465,5 +483,6 @@ module.exports = {
     getEndScreen,
     endScreen,
     getDebugInfo,
-    setInfoCards
+    setInfoCards,
+    getVideoClaims
 }

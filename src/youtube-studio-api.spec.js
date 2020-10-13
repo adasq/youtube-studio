@@ -1,7 +1,7 @@
 jest.requireActual('node-fetch')
 const nconf = require('nconf')
 
-const { setMonetisation, init, setInfoCards, getVideo, setEndScreen, getEndScreen, endScreen } = require('./youtube-studio-api');
+const { setMonetisation, init, setInfoCards, getVideo, setEndScreen, getEndScreen, endScreen, getVideoClaims } = require('./youtube-studio-api');
 
 nconf.env().file({ file: './config.json' });
 
@@ -15,6 +15,7 @@ const {
 
 
 const VIDEO_ID = nconf.get('VIDEO_ID')
+const CLAIMS_VIDEO_ID = nconf.get('CLAIMS_VIDEO_ID')
 const PLAYLIST_ID = nconf.get('PLAYLIST_ID')
 const CHANNEL_ID = nconf.get('CHANNEL_ID')
 const LESS_THAN_10MIN_VIDEO_ID = nconf.get('LESS_THAN_10MIN_VIDEO_ID');
@@ -122,5 +123,23 @@ describe('for authenticated user', () => {
             expect(endscreenElements[2].videoEndscreenElement.videoType).toEqual('VIDEO_TYPE_BEST_FOR_VIEWER')
             expect(endscreenElements[3].playlistEndscreenElement.playlistId).toEqual(PLAYLIST_ID)
         });
+    })
+
+    describe('video claims', () => {
+        it('getVideoClaims', async () => {
+            const result = await getVideoClaims(CLAIMS_VIDEO_ID);
+            
+            const humanizedClaims = result.receivedClaims.map(claim => {
+                const audio = claim.asset.metadata.soundRecording;
+                const timestamp = claim.matchDetails;
+                
+                return `"${audio.title}", by ${audio.artists.join(', ')} (starting at ${timestamp.longestMatchStartTimeSeconds} sec.)`
+            })
+
+            expect(humanizedClaims).toEqual([
+                '"Fasl", by Kabul Dreams (starting at 2771 sec.)',
+                '"Long in the Tooth", by The Budos Band (starting at 117 sec.)'
+            ])
+        })
     })
 })
