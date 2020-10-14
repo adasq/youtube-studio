@@ -12,7 +12,7 @@ It is a set of features not provided by official Youtube API.
 ## Features
 - setting monetisation
 - setting endscreen
-- geting endscreen
+- getting endscreen
 - getting video details
 - setting info cards
 - getting video claims
