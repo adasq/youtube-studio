@@ -26,12 +26,13 @@ async function init({
     SSID,
     APISID,
     SAPISID,
+    LOGIN_INFO,
 }) {
     const DATE = Date.now().toString();
 
     const SAPISIDHASH = generateSAPISIDHASH(DATE, SAPISID)
 
-    const cookie = `SID=${SID}; HSID=${HSID}; SSID=${SSID}; APISID=${APISID}; SAPISID=${SAPISID};`
+    const cookie = `SID=${SID}; HSID=${HSID}; SSID=${SSID}; APISID=${APISID}; SAPISID=${SAPISID}; ${LOGIN_INFO ? `LOGIN_INFO=${LOGIN_INFO}` : ''}`
 
     headers = {
         'authorization': `SAPISIDHASH ${SAPISIDHASH}`,
