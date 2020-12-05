@@ -218,12 +218,12 @@ const TYPE_PLAYLIST = (playlistId) => ({
 })
 
 
-const TYPE_SUBSCRIBE = () => ({
+const TYPE_SUBSCRIBE = (channelId = '') => ({
     width: 0.15438597000000004,
     channelEndscreenElement: {
-        channelId: "UCqG93OcM0MV6zbhiAHtKVAg",
+        channelId,
         isSubscribe: true,
-        metadata: "asd"
+        metadata: ""
     }
 })
 
@@ -246,7 +246,7 @@ const DEFAULT_ELEMENT = {
 }
 
 async function setEndScreen(videoId, startMs, elements = []) {
-    const template = edit_video_template;
+    const template = _.cloneDeep(edit_video_template)
 
     const extendedElements = elements.map(element => ({
         ...DEFAULT_ELEMENT,
@@ -255,6 +255,7 @@ async function setEndScreen(videoId, startMs, elements = []) {
 
     _.set(template, 'endscreenEdit.endscreen.startMs', startMs);
     _.set(template, 'endscreenEdit.endscreen.elements', extendedElements);
+    _.set(template, 'endscreenEdit.endscreen.encryptedVideoId', videoId);
 
     _.set(template, 'externalVideoId', videoId);
     _.set(template, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
@@ -313,7 +314,6 @@ async function getEndScreen(videoId) {
         .then(res => res.json())
 }
 
-
 const edit_video_template = {
     "endscreenEdit": {
         "endscreen": {
@@ -336,8 +336,7 @@ const edit_video_template = {
         },
         "request": {
             "returnLogEntry": true,
-            "internalExperimentFlags": [
-            ]
+            "internalExperimentFlags": []
         },
         "user": {
             "onBehalfOfUser": IT_WILL_BE_SET_DURING_REQUEST_BUILD
@@ -378,20 +377,7 @@ const get_creator_endscreens_template = {
         },
         "request": {
             "returnLogEntry": true,
-            "internalExperimentFlags": [
-                {
-                    "key": "force_route_innertube_shopping_settings_to_outertube",
-                    "value": "true"
-                },
-                {
-                    "key": "force_route_delete_playlist_to_outertube",
-                    "value": "false"
-                },
-                {
-                    "key": "force_live_chat_merchandise_upsell",
-                    "value": "false"
-                }
-            ]
+            "internalExperimentFlags": []
         },
         "user": {
             "onBehalfOfUser": IT_WILL_BE_SET_DURING_REQUEST_BUILD,
@@ -416,20 +402,7 @@ const get_creator_videos_template = {
         },
         "request": {
             "returnLogEntry": true,
-            "internalExperimentFlags": [
-                {
-                    "key": "force_route_delete_playlist_to_outertube",
-                    "value": "false"
-                },
-                {
-                    "key": "force_route_innertube_shopping_settings_to_outertube",
-                    "value": "true"
-                },
-                {
-                    "key": "force_live_chat_merchandise_upsell",
-                    "value": "false"
-                }
-            ]
+            "internalExperimentFlags": []
         },
         "user": {
             "onBehalfOfUser": IT_WILL_BE_SET_DURING_REQUEST_BUILD
