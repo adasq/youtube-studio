@@ -1,9 +1,12 @@
+const fs = require('fs');
+const path = require('path');
 const fetch = require('node-fetch');
 const sha1 = require('sha1');
 const _ = require('lodash');
 
 const cheerio = require('cheerio');
 const { VM } = require('vm2');
+const { reject } = require('lodash');
 
 const YT_STUDIO_URL = 'https://studio.youtube.com';
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36';
@@ -314,6 +317,142 @@ async function getEndScreen(videoId) {
         .then(res => res.json())
 }
 
+
+async function upload({ channelId = '', newTitle = `unnamed-${Date.now()}`, newPrivacy = 'PRIVATE', stream, isDraft = false }) {
+    async function uploadFile(uploadUrl) {
+        return new Promise((resolve, reject) => {
+            stream.pipe(
+                require('request')({
+                    url: uploadUrl,
+                    method: 'POST',
+                    "headers": {
+                      "accept": "*/*",
+                      "accept-language": "pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7",
+                      "content-type": "application/x-www-form-urlencoded;charset=utf-8",
+                      "sec-fetch-dest": "empty",
+                      "sec-fetch-mode": "cors",
+                      "sec-fetch-site": "same-site",
+                      "x-goog-upload-command": "upload, finalize",
+                      "x-goog-upload-file-name": newTitle,
+                      "x-goog-upload-offset": "0",
+                      "referrer": "https://studio.youtube.com/",
+                    }
+                  }, (err, resp, body) => {
+                      if(err) return reject(err)
+                      resolve(JSON.parse(body).scottyResourceId)
+                  })
+            )
+        })
+    }
+    const generateFrontendUploadId = function () {
+        var Qkb;
+        Qkb = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
+        for (var a = Array(36), b = 0, c, e = 0; 36 > e; e++)
+            8 == e || 13 == e || 18 == e || 23 == e ? a[e] = "-" : 14 == e ? a[e] = "4" : (2 >= b && (b = 33554432 + 16777216 * Math.random() | 0),
+                c = b & 15,
+                b >>= 4,
+                a[e] = Qkb[19 == e ? c & 3 | 8 : c]);
+        return a.join("")
+    }
+
+    const frontendUploadId = `innertube_studio:${generateFrontendUploadId()}:0`
+   
+    const resp = await fetch("https://upload.youtube.com/upload/studio", {
+        "headers": {
+            ...headers,
+            "accept": "*/*",
+            "accept-language": "pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7",
+            "content-type": "application/x-www-form-urlencoded;charset=UTF-8",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-site",
+            "x-goog-upload-command": "start",
+            "x-goog-upload-file-name": newTitle,
+            // "x-goog-upload-header-content-length": "1570024",
+            "x-goog-upload-protocol": "resumable" 
+        },
+        "referrer": "https://studio.youtube.com/",
+        "referrerPolicy": "strict-origin-when-cross-origin",
+        "method": "POST",
+        "mode": "cors",
+        body: `{\"frontendUploadId\":\"${frontendUploadId}\"}`
+    })
+
+
+    const uploadUrl = resp.headers.get('x-goog-upload-url');
+    const scottyResourceId = resp.headers.get('x-goog-upload-header-scotty-resource-id');
+    console.log('scottyResourceId', scottyResourceId)
+
+    console.log(uploadUrl)
+    const scottyResourceId2 = await uploadFile(uploadUrl);
+    console.log('scottyResourceId2', scottyResourceId2)
+
+    const createVideoBody = {
+        "channelId": channelId,
+        "resourceId": {
+            "scottyResourceId": {
+                "id": scottyResourceId2
+            }
+        },
+        "frontendUploadId": frontendUploadId,
+        "initialMetadata": {
+            "title": {
+                "newTitle": newTitle
+            },
+            "privacy": {
+                "newPrivacy": newPrivacy
+            },
+            "draftState": {
+                "isDraft": isDraft
+            }
+        },
+        "context": {
+            "client": {
+                "clientName": 62,
+                "clientVersion": "1.20201130.03.00",
+                "hl": "en-GB",
+                "gl": "PL",
+                "experimentsToken": "",
+                "utcOffsetMinutes": 60
+            },
+            "request": {
+                "returnLogEntry": true,
+                "internalExperimentFlags": [],
+                "sessionInfo": {
+                    "token":""
+                }
+            },
+            "user": {
+                "onBehalfOfUser": config.DELEGATED_SESSION_ID,
+                "delegationContext": {
+                    "roleType": {
+                        "channelRoleType": "CREATOR_CHANNEL_ROLE_TYPE_OWNER"
+                    },
+                    "externalChannelId": channelId
+                },
+                "serializedDelegationContext": ""
+            },
+            "clientScreenNonce": ""
+        },
+        "delegationContext": {
+            "roleType": {
+                "channelRoleType": "CREATOR_CHANNEL_ROLE_TYPE_OWNER"
+            },
+            "externalChannelId": channelId
+        }
+    }
+
+    return (fetch(`https://studio.youtube.com/youtubei/v1/upload/createvideo?alt=json&key=${config.INNERTUBE_API_KEY}`, {
+        headers,
+        "body": JSON.stringify(
+            createVideoBody
+        ),
+        "method": "POST",
+        "mode": "cors"
+    }).then(response => response.json()));
+}
+
+//============================================================================
 const edit_video_template = {
     "endscreenEdit": {
         "endscreen": {
@@ -457,5 +596,6 @@ module.exports = {
     endScreen,
     getDebugInfo,
     setInfoCards,
-    getVideoClaims
+    getVideoClaims,
+    upload
 }
