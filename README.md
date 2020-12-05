@@ -147,8 +147,8 @@ In order to authenticate you must provide cookie values after authenticating to 
 - SSID,
 - APISID,
 - SAPISID
+- optionally LOGIN_INFO (If you have multiple YouTube accounts on the same email, you might also need to provide `LOGIN_INFO` cookie!)
 
-**Note**: If you have multiple YouTube accounts on the same email, you might also need to provide `LOGIN_INFO` cookie!
 
 ![](docs/images/cookies.jpg)
 
@@ -162,8 +162,9 @@ await init({
     HSID,
     SSID,
     APISID,
-    SAPISID
-}) // you can authenticate once! pass `LOGIN_INFO` as 6-th argument if needed
+    SAPISID,
+    LOGIN_INFO // this is optional! see Notes above
+}) // you can authenticate once!
         
 const video = await getVideo('your video id');
 console.log(video);
