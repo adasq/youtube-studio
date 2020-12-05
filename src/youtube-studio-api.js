@@ -1,12 +1,11 @@
-const fs = require('fs');
-const path = require('path');
 const fetch = require('node-fetch');
 const sha1 = require('sha1');
 const _ = require('lodash');
 
 const cheerio = require('cheerio');
+const request = require('request');
+
 const { VM } = require('vm2');
-const { reject } = require('lodash');
 
 const YT_STUDIO_URL = 'https://studio.youtube.com';
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36';
@@ -322,10 +321,11 @@ async function upload({ channelId = '', newTitle = `unnamed-${Date.now()}`, newP
     async function uploadFile(uploadUrl) {
         return new Promise((resolve, reject) => {
             stream.pipe(
-                require('request')({
+                request({
                     url: uploadUrl,
                     method: 'POST',
                     "headers": {
+                        ...headers,
                       "accept": "*/*",
                       "accept-language": "pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7",
                       "content-type": "application/x-www-form-urlencoded;charset=utf-8",
@@ -335,7 +335,7 @@ async function upload({ channelId = '', newTitle = `unnamed-${Date.now()}`, newP
                       "x-goog-upload-command": "upload, finalize",
                       "x-goog-upload-file-name": newTitle,
                       "x-goog-upload-offset": "0",
-                      "referrer": "https://studio.youtube.com/",
+                      "referrer": YT_STUDIO_URL,
                     }
                   }, (err, resp, body) => {
                       if(err) return reject(err)
@@ -380,12 +380,9 @@ async function upload({ channelId = '', newTitle = `unnamed-${Date.now()}`, newP
 
 
     const uploadUrl = resp.headers.get('x-goog-upload-url');
-    const scottyResourceId = resp.headers.get('x-goog-upload-header-scotty-resource-id');
-    console.log('scottyResourceId', scottyResourceId)
+    // const scottyResourceId = resp.headers.get('x-goog-upload-header-scotty-resource-id');
 
-    console.log(uploadUrl)
     const scottyResourceId2 = await uploadFile(uploadUrl);
-    console.log('scottyResourceId2', scottyResourceId2)
 
     const createVideoBody = {
         "channelId": channelId,
@@ -444,11 +441,10 @@ async function upload({ channelId = '', newTitle = `unnamed-${Date.now()}`, newP
 
     return (fetch(`https://studio.youtube.com/youtubei/v1/upload/createvideo?alt=json&key=${config.INNERTUBE_API_KEY}`, {
         headers,
-        "body": JSON.stringify(
+        body: JSON.stringify(
             createVideoBody
         ),
-        "method": "POST",
-        "mode": "cors"
+        method: "POST",
     }).then(response => response.json()));
 }
 
