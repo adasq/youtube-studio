@@ -1,6 +1,8 @@
 *.spec.js
 config.json.dist
 config.json
+config-*.json
+examples
 .github
 docs
 SampleVideo_360x240_2mb.mp4
