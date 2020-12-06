@@ -1,7 +1,7 @@
 jest.requireActual('node-fetch')
 const nconf = require('nconf')
 
-const { setMonetisation, init, setInfoCards, getVideo, setEndScreen, getEndScreen, endScreen, getVideoClaims } = require('./youtube-studio-api');
+const { setMonetisation, init, setInfoCards, getVideo, setEndScreen, getEndScreen, endScreen, getVideoClaims, upload } = require('./youtube-studio-api');
 
 nconf.env().file({ file: './config.json' });
 
@@ -141,5 +141,16 @@ describe('for authenticated user', () => {
                 '"Long in the Tooth", by The Budos Band (starting at 117 sec.)'
             ])
         })
+    })
+
+    it('should upload video', async () => {
+        const result = await upload({
+            channelId: CHANNEL_ID,
+            newTitle: `Sample video no ${Date.now()}`,
+            // newPrivacy: 'UNLISTED' // 'PUBLIC', 'PRIVATE'
+            stream: require('fs').createReadStream(require('path').join(__dirname, '../', 'SampleVideo_360x240_2mb.mp4'))
+         });
+        console.log(JSON.stringify(result))
+        expect(result.videoId.length).toBeGreaterThan(0)
     })
 })
