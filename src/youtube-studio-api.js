@@ -1,14 +1,15 @@
 const fetch = require('node-fetch');
 const sha1 = require('sha1');
 const _ = require('lodash');
-
 const cheerio = require('cheerio');
-
 const { VM } = require('vm2');
+
+const uploadFile = require('./upload');
 
 const YT_STUDIO_URL = 'https://studio.youtube.com';
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36';
 const IT_WILL_BE_SET_DURING_REQUEST_BUILD = null;
+
 
 const generateSAPISIDHASH = (date, sapisid) => `${date}_${sha1(`${date} ${sapisid} ${YT_STUDIO_URL}`)}`
 
@@ -317,119 +318,8 @@ async function getEndScreen(videoId) {
 }
 
 
-async function upload({ channelId = '', newTitle = `unnamed-${Date.now()}`, newPrivacy = 'PRIVATE', stream, isDraft = false }) {
-    async function uploadFile(uploadUrl) {
-        return fetch(uploadUrl, {
-            method: 'POST',
-            "headers": {
-                ...headers,
-              "content-type": "application/x-www-form-urlencoded;charset=utf-8",
-              "x-goog-upload-command": "upload, finalize",
-              "x-goog-upload-file-name": newTitle,
-              "x-goog-upload-offset": "0",
-              "referrer": YT_STUDIO_URL + '/',
-            },
-            body: stream
-        }).then(resp => resp.json()).then(body => body.scottyResourceId)    
-    }
-
-    const generateFrontendUploadId = function () {
-        var Qkb;
-        Qkb = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
-        for (var a = Array(36), b = 0, c, e = 0; 36 > e; e++)
-            8 == e || 13 == e || 18 == e || 23 == e ? a[e] = "-" : 14 == e ? a[e] = "4" : (2 >= b && (b = 33554432 + 16777216 * Math.random() | 0),
-                c = b & 15,
-                b >>= 4,
-                a[e] = Qkb[19 == e ? c & 3 | 8 : c]);
-        return a.join("")
-    }
-
-    const frontendUploadId = `innertube_studio:${generateFrontendUploadId()}:0`
-   
-    const resp = await fetch("https://upload.youtube.com/upload/studio", {
-        headers: {
-            ...headers,
-            "content-type": "application/x-www-form-urlencoded;charset=UTF-8",
-            "x-goog-upload-command": "start",
-            "x-goog-upload-file-name": newTitle,
-            // "x-goog-upload-header-content-length": "1570024",
-            "x-goog-upload-protocol": "resumable" 
-        },
-        referrer: YT_STUDIO_URL + '/',
-        referrerPolicy: "strict-origin-when-cross-origin",
-        method: "POST",
-        mode: "cors",
-        body: JSON.stringify({ frontendUploadId })
-    })
-
-
-    const uploadUrl = resp.headers.get('x-goog-upload-url');
-    // const scottyResourceId = resp.headers.get('x-goog-upload-header-scotty-resource-id');
-
-    const scottyResourceId2 = await uploadFile(uploadUrl);
-
-    const createVideoBody = {
-        "channelId": channelId,
-        "resourceId": {
-            "scottyResourceId": {
-                "id": scottyResourceId2
-            }
-        },
-        "frontendUploadId": frontendUploadId,
-        "initialMetadata": {
-            "title": {
-                "newTitle": newTitle
-            },
-            "privacy": {
-                "newPrivacy": newPrivacy
-            },
-            "draftState": {
-                "isDraft": isDraft
-            }
-        },
-        "context": {
-            "client": {
-                "clientName": 62,
-                "clientVersion": "1.20201130.03.00",
-                "hl": "en-GB",
-                "gl": "PL",
-                "experimentsToken": "",
-                "utcOffsetMinutes": 60
-            },
-            "request": {
-                "returnLogEntry": true,
-                "internalExperimentFlags": [],
-                "sessionInfo": {
-                    "token":""
-                }
-            },
-            "user": {
-                "onBehalfOfUser": config.DELEGATED_SESSION_ID,
-                "delegationContext": {
-                    "roleType": {
-                        "channelRoleType": "CREATOR_CHANNEL_ROLE_TYPE_OWNER"
-                    },
-                    "externalChannelId": channelId
-                },
-                "serializedDelegationContext": ""
-            },
-            "clientScreenNonce": ""
-        },
-        "delegationContext": {
-            "roleType": {
-                "channelRoleType": "CREATOR_CHANNEL_ROLE_TYPE_OWNER"
-            },
-            "externalChannelId": channelId
-        }
-    }
-
-    return (fetch(`https://studio.youtube.com/youtubei/v1/upload/createvideo?alt=json&key=${config.INNERTUBE_API_KEY}`, {
-        headers,
-        body: JSON.stringify(
-            createVideoBody
-        ),
-        method: "POST",
-    }).then(response => response.json()));
+async function upload(options) {
+    return uploadFile(options, headers, config)
 }
 
 //============================================================================
