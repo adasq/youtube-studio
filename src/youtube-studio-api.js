@@ -322,7 +322,6 @@ async function upload(options) {
     return uploadFile(options, headers, config)
 }
 
-//============================================================================
 const edit_video_template = {
     "endscreenEdit": {
         "endscreen": {

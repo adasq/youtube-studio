@@ -15,28 +15,38 @@ const generateHash = function () {
 
 const generateFrontendUploadId = () => `innertube_studio:${generateHash()}:0`
 
-async function upload({ channelId = '', newTitle = `unnamed-${Date.now()}`, newPrivacy = 'PRIVATE', stream, isDraft = false }, headers, config) {
+async function upload(
+    {
+        channelId = '',
+        newTitle = `unnamed-${Date.now()}`,
+        newPrivacy = 'PRIVATE',
+        stream,
+        isDraft = false
+    },
+    headers,
+    config
+) {
 
     async function uploadFile(uploadUrl) {
         return fetch(uploadUrl, {
             method: 'POST',
             headers: {
                 ...headers,
-              "content-type": FORM_CONTENT_TYPE,
-              "x-goog-upload-command": "upload, finalize",
-              "x-goog-upload-file-name": newTitle,
-              "x-goog-upload-offset": "0",
-              "referrer": YT_STUDIO_URL,
+                "content-type": FORM_CONTENT_TYPE,
+                "x-goog-upload-command": "upload, finalize",
+                "x-goog-upload-file-name": newTitle,
+                "x-goog-upload-offset": "0",
+                "referrer": YT_STUDIO_URL,
             },
             body: stream
         })
             .then(resp => resp.json())
-            .then(body => body.scottyResourceId)    
+            .then(body => body.scottyResourceId)
     }
-    
-    
+
+
     const frontendUploadId = generateFrontendUploadId()
-    
+
     const resp = await fetch("https://upload.youtube.com/upload/studio", {
         headers: {
             ...headers,
@@ -44,18 +54,18 @@ async function upload({ channelId = '', newTitle = `unnamed-${Date.now()}`, newP
             "x-goog-upload-command": "start",
             "x-goog-upload-file-name": newTitle,
             // "x-goog-upload-header-content-length": "1570024",
-            "x-goog-upload-protocol": "resumable" 
+            "x-goog-upload-protocol": "resumable"
         },
         referrer: YT_STUDIO_URL,
         method: "POST",
         body: JSON.stringify({ frontendUploadId })
     })
-    
-    
+
+
     const uploadUrl = resp.headers.get('x-goog-upload-url');
-    
+
     const scottyResourceId = await uploadFile(uploadUrl);
-    
+
     const createVideoBody = {
         "channelId": channelId,
         "resourceId": {
@@ -88,7 +98,7 @@ async function upload({ channelId = '', newTitle = `unnamed-${Date.now()}`, newP
                 "returnLogEntry": true,
                 "internalExperimentFlags": [],
                 "sessionInfo": {
-                    "token":""
+                    "token": ""
                 }
             },
             "user": {
@@ -110,7 +120,7 @@ async function upload({ channelId = '', newTitle = `unnamed-${Date.now()}`, newP
             "externalChannelId": channelId
         }
     }
-    
+
     return (fetch(`https://studio.youtube.com/youtubei/v1/upload/createvideo?alt=json&key=${config.INNERTUBE_API_KEY}`, {
         headers,
         body: JSON.stringify(
