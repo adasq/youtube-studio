@@ -30,6 +30,7 @@
     "vm2": "3.9.2"
   },
   "devDependencies": {
-    "jest": "25.4.0"
+    "jest": "25.4.0",
+    "progress-stream": "2.0.0"
   }
 }

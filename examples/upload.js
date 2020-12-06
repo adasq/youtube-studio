@@ -39,9 +39,9 @@ const {
          const result = await upload({
             channelId: nconf.get('CHANNEL_ID'),
             newTitle: `Sample video no ${Date.now()}`,
-            // newPrivacy: 'UNLISTED' // 'PUBLIC' or 'UNLISTED' or 'PRIVATE'
-            // isDraft: true,
             stream: fs.createReadStream(FILE_PATH).pipe(progressLogger)
+            // newPrivacy: 'UNLISTED' // 'PUBLIC' or 'UNLISTED' or 'PRIVATE',
+            // isDraft: true,            
          });
          console.log(result)
          console.log(result.videoId)
