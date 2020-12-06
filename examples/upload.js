@@ -3,7 +3,7 @@ const path = require('path')
 const fs = require('fs')
 const progress = require('progress-stream')
 
-const { upload, init } = require('../src/youtube-studio-api')
+const { upload, init, getVideo } = require('../src/youtube-studio-api')
 
 nconf.env().file({ file: './config-adasq.json' });
 
@@ -36,15 +36,19 @@ const {
       });
 
       try {
-         const result = await upload({
+         const uploadResult = await upload({
             channelId: nconf.get('CHANNEL_ID'),
-            newTitle: `Sample video no ${Date.now()}`,
-            stream: fs.createReadStream(FILE_PATH).pipe(progressLogger)
-            // newPrivacy: 'UNLISTED' // 'PUBLIC' or 'UNLISTED' or 'PRIVATE',
-            // isDraft: true,            
+            stream: fs.createReadStream(FILE_PATH).pipe(progressLogger),
+
+            newTitle: `Sample video no ${Date.now()}`, // optional (auto generated name by default)
+            newPrivacy: 'PRIVATE', // optional (PRIVATE by default), might be: 'PUBLIC' or 'UNLISTED' or 'PRIVATE'
+            isDraft: false, // optional (false by default)
          });
-         console.log(result)
-         console.log(result.videoId)
+         console.log(uploadResult)
+         console.log(uploadResult.videoId)
+
+         const video = await getVideo(uploadResult.videoId)
+         console.log(video)
       } catch (err) {
          console.log(err.message)
       }
