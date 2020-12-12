@@ -5,17 +5,17 @@
 
 
 Unofficial YouTube Studio API.
-It is a set of features not provided by official Youtube API.
+Set of features **limited** or **not provided** by official YouTube API
 
 **BEWARE: API will change during upcomming releases**
 
 ## Features
 - setting monetisation
-- setting endscreen
-- getting endscreen
-- getting video details
+- uploading video (**NOT LIMITED** - official API's [`videos.insert`](https://developers.google.com/youtube/v3/determine_quota_cost) **charges you 1600 quota units**)
+- setting / getting endscreen
 - setting info cards
 - getting video claims
+- getting video details
 
 ## Installation
 
@@ -53,6 +53,30 @@ const result = await setMonetisation({
 
 console.log(result)
 ```
+
+## upload video
+
+Official API's [`videos.insert`](https://developers.google.com/youtube/v3/determine_quota_cost) resource **charges you 1600 quota units** per single video upload.
+
+```js
+const fs = require('fs');
+const { init, upload } = require('youtube-studio');
+
+await init({ ... }) // read more below (Preparing Authentication)
+
+const result = await upload({
+    channelId: 'UCzQUP1qoWDoEbmsQxvdjxgQ', // your channelId
+    stream: fs.createReadStream('./example=video.mp4'), // your video stream
+
+    newTitle: 'new video 1', // optional, your video name
+    newPrivacy: 'PRIVATE', // optional (PRIVATE by default), ('PUBLIC', 'UNLISTED', 'PRIVATE' options available)
+    isDraft: false, // optional, video can be a draft (false by default)
+});
+
+console.log(result);
+```
+
+Full example with "progress" feature available in [`/examples/upload.js`](https://github.com/adasq/youtube-studio/blob/master/examples/upload.js)
 
 ## Setting endscreen
 
