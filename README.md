@@ -26,7 +26,7 @@ $ npm i -SE youtube-studio
 ## Setting monetisation
 
 ```js
-const { init, setMonetisation } = require('youtube-studio');
+const { init, setMonetisation } = require('youtube-studio')
 
 await init({ ... }) // read more below (Preparing Authentication)
 
@@ -36,17 +36,17 @@ const result = await setMonetisation({
         newMonetizeWithAds: true // Monetisation: On
     },
     adFormats: { // Type of ads
-        newHasOverlayAds: "ENABLED", // Overlay ads
-        newHasProductListingAds: "ENABLED" // Sponsored cards
-        newHasSkippableVideoAds: "DISABLED", // Skippable video ads
-        newHasNonSkippableVideoAds: "ENABLED", // Non-skippable video ads
+        newHasOverlayAds: 'ENABLED', // Overlay ads
+        newHasProductListingAds: 'ENABLED', // Sponsored cards
+        newHasSkippableVideoAds: 'DISABLED', // Skippable video ads
+        newHasNonSkippableVideoAds: 'ENABLED', // Non-skippable video ads
         
     },
     adBreaks: { // Location of video ads
-        newHasPrerolls: "DISABLED" // Before video
-        newHasMidrollAds: "DISABLED", // During video
-        newHasManualMidrolls: "DISABLED", // Manual placement (not yet provided)
-        newHasPostrolls: "ENABLED", // After video
+        newHasPrerolls: 'DISABLED' // Before video
+        newHasMidrollAds: 'DISABLED', // During video
+        newHasManualMidrolls: 'DISABLED', // Manual placement (not yet provided)
+        newHasPostrolls: 'ENABLED', // After video
         
     },
 })
@@ -59,8 +59,8 @@ console.log(result)
 Official API's [`videos.insert`](https://developers.google.com/youtube/v3/determine_quota_cost) resource **charges you 1600 quota units** per single video upload.
 
 ```js
-const fs = require('fs');
-const { init, upload } = require('youtube-studio');
+const fs = require('fs')
+const { init, upload } = require('youtube-studio')
 
 await init({ ... }) // read more below (Preparing Authentication)
 
@@ -71,17 +71,17 @@ const result = await upload({
     newTitle: 'new video 1', // optional, your video name
     newPrivacy: 'PRIVATE', // optional (PRIVATE by default), ('PUBLIC', 'UNLISTED', 'PRIVATE' options available)
     isDraft: false, // optional, video can be a draft (false by default)
-});
+})
 
-console.log(result);
+console.log(result)
 ```
 
-Full example with "progress" feature available in [`/examples/upload.js`](https://github.com/adasq/youtube-studio/blob/master/examples/upload.js)
+Full example with 'progress' feature available in [`/examples/upload.js`](https://github.com/adasq/youtube-studio/blob/master/examples/upload.js)
 
 ## Setting endscreen
 
 ```js
-const { init, setEndScreen, endScreen } = require('youtube-studio');
+const { init, setEndScreen, endScreen } = require('youtube-studio')
 
 await init({ ... }) // read more below (Preparing Authentication)
 
@@ -101,7 +101,7 @@ console.log(result)
 ## Getting endscreen
 
 ```js
-const { init, getEndScreen } = require('youtube-studio');
+const { init, getEndScreen } = require('youtube-studio')
 
 await init({ ... }) // read more below (Preparing Authentication)
 
@@ -113,13 +113,13 @@ console.log(result.endscreens[0].elements) // see more in unit tests
 ## Getting video details
 
 ```js
-const { init, setEndScreen, endScreen } = require('youtube-studio');
+const { init, setEndScreen, endScreen } = require('youtube-studio')
 
 await init({ ... }) // read more below (Preparing Authentication)
 
 const result = await getVideo(VIDEO_ID)
 
-const video = result.videos[0];
+const video = result.videos[0]
 
 console.log(video.status) // VIDEO_STATUS_PROCESSED
 console.log(video.monetization.adMonetization.effectiveStatus) // VIDEO_MONETIZING_STATUS_MONETIZING_WITH_LIMITED_ADS
@@ -130,7 +130,7 @@ console.log(video.watchUrl) // '1404'
 ## Setting info cards
 
 ```js
-const { init, setInfoCards } = require('youtube-studio');
+const { init, setInfoCards } = require('youtube-studio')
 
 await init({ ... }) // read more below (Preparing Authentication)
 
@@ -139,21 +139,21 @@ const result = await setInfoCards(VIDEO_ID, [{
     teaserStartMs: 15000,
     customMessage: 'Check this one:',
     teaserText: 'If you need more...'
-}]);
+}])
 ```
 
 ## Getting video claims
 
 ```js
-const { init, getVideoClaims } = require('youtube-studio');
+const { init, getVideoClaims } = require('youtube-studio')
 
 await init({ ... }) // read more below (Preparing Authentication)
 
-const result = await getVideoClaims(CLAIMS_VIDEO_ID);
+const result = await getVideoClaims(CLAIMS_VIDEO_ID)
             
 const humanizedClaims = result.receivedClaims.map(claim => {
-    const audio = claim.asset.metadata.soundRecording;
-    const timestamp = claim.matchDetails;
+    const audio = claim.asset.metadata.soundRecording
+    const timestamp = claim.matchDetails
     
     return `"${audio.title}", by ${audio.artists.join(', ')} (starting at ${timestamp.longestMatchStartTimeSeconds} sec.)`
 })
@@ -179,7 +179,7 @@ In order to authenticate you must provide cookie values after authenticating to 
 #### STEP 2: Setup `youtube-studio`
 
 ```js
-const { init, getVideo } = require('youtube-studio');
+const { init, getVideo } = require('youtube-studio')
 
 await init({
     SID,
@@ -190,6 +190,6 @@ await init({
     LOGIN_INFO // this is optional! see Notes above
 }) // you can authenticate once!
         
-const video = await getVideo('your video id');
-console.log(video);
+const video = await getVideo('your video id')
+console.log(video)
 ```
