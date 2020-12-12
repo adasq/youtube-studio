@@ -54,7 +54,7 @@ const result = await setMonetisation({
 console.log(result)
 ```
 
-## upload video
+## Uploading video
 
 Official API's [`videos.insert`](https://developers.google.com/youtube/v3/determine_quota_cost) resource **charges you 1600 quota units** per single video upload.
 
