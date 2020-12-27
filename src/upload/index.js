@@ -19,6 +19,7 @@ async function upload(
     {
         channelId = '',
         newTitle = `unnamed-${Date.now()}`,
+        newDescription = '',
         newPrivacy = 'PRIVATE',
         stream,
         isDraft = false
@@ -34,7 +35,7 @@ async function upload(
                 ...headers,
                 "content-type": FORM_CONTENT_TYPE,
                 "x-goog-upload-command": "upload, finalize",
-                "x-goog-upload-file-name": newTitle,
+                "x-goog-upload-file-name": "file-" + Date.now(),
                 "x-goog-upload-offset": "0",
                 "referrer": YT_STUDIO_URL,
             },
@@ -52,8 +53,7 @@ async function upload(
             ...headers,
             "content-type": FORM_CONTENT_TYPE,
             "x-goog-upload-command": "start",
-            "x-goog-upload-file-name": newTitle,
-            // "x-goog-upload-header-content-length": "1570024",
+            "x-goog-upload-file-name": "file-" + Date.now(),
             "x-goog-upload-protocol": "resumable"
         },
         referrer: YT_STUDIO_URL,
@@ -77,6 +77,10 @@ async function upload(
         "initialMetadata": {
             "title": {
                 "newTitle": newTitle
+            },
+            "description": {
+                "newDescription": newDescription,
+                "shouldSegment": true
             },
             "privacy": {
                 "newPrivacy": newPrivacy

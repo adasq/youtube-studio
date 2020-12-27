@@ -147,6 +147,7 @@ describe('for authenticated user', () => {
         const result = await upload({
             channelId: CHANNEL_ID,
             newTitle: `Sample video no ${Date.now()}`,
+            newDescription: `desc!`,
             // newPrivacy: 'UNLISTED' // 'PUBLIC', 'PRIVATE'
             stream: require('fs').createReadStream(require('path').join(__dirname, '../', 'SampleVideo_360x240_2mb.mp4'))
          });
