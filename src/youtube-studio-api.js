@@ -120,6 +120,73 @@ async function getConfig() {
 }
 
 async function setMonetisation(monetisationConfig) {
+    const attrs = await fetch(`${YT_STUDIO_URL}/youtubei/v1/att/get?alt=json&key=${config.INNERTUBE_API_KEY}`, {
+        method: 'POST',
+        headers,
+        body: `${JSON.stringify({"context":{"client":{"clientName":62,"clientVersion":"1.20210104.03.01","hl":"en-GB","gl":"PL","experimentsToken":"","utcOffsetMinutes":60},"request":{"returnLogEntry":true,"internalExperimentFlags":[{"key":"force_route_delete_playlist_to_outertube","value":"false"}]},"user":{"onBehalfOfUser":"111199193633289494597","delegationContext":{"externalChannelId":"UCqG93OcM0MV6zbhiAHtKVAg","roleType":{"channelRoleType":"CREATOR_CHANNEL_ROLE_TYPE_OWNER"}},"serializedDelegationContext":"EhhVQ3FHOTNPY00wTVY2emJoaUFIdEtWQWcqAggI"},"clientScreenNonce":"MC4yNjkyMzQxNTQ0ODE2MDM5"},"engagementType":"ENGAGEMENT_TYPE_CREATOR_STUDIO_ACTION","ids":[{"externalChannelId":"UCqG93OcM0MV6zbhiAHtKVAg"}]})}`
+    })
+        .then(res => res.json())
+
+        // console.log(attrs)
+        console.log(attrs.challenge)
+        console.log(attrs.botguardData.program)
+        
+
+        const token = await fetch(`${YT_STUDIO_URL}/youtubei/v1/att/esr?alt=json&key=${config.INNERTUBE_API_KEY}`, {
+            method: 'POST',
+            headers: {
+                "sec-ch-ua": "\"Google Chrome\";v=\"87\", \" Not;A Brand\";v=\"99\", \"Chromium\";v=\"87\"",
+                "sec-ch-ua-mobile": "?0",
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-origin",
+                "x-goog-authuser": "0",
+                "x-goog-visitor-id": "Cgs0Z2JqQUVoMkg0RSil6Oz_BQ%3D%3D",
+                "x-origin": "https://studio.youtube.com",
+              
+  ...headers
+              },
+            body2: "{\"context\":{\"client\":{\"clientName\":62,\"clientVersion\":\"1.20210104.03.01\",\"hl\":\"en-GB\",\"gl\":\"PL\",\"experimentsToken\":\"\",\"utcOffsetMinutes\":60},\"request\":{\"returnLogEntry\":true,\"internalExperimentFlags\":[{\"key\":\"force_route_delete_playlist_to_outertube\",\"value\":\"false\"}]},\"user\":{\"onBehalfOfUser\":\"111199193633289494597\",\"delegationContext\":{\"externalChannelId\":\"UCqG93OcM0MV6zbhiAHtKVAg\",\"roleType\":{\"channelRoleType\":\"CREATOR_CHANNEL_ROLE_TYPE_OWNER\"}},\"serializedDelegationContext\":\"EhhVQ3FHOTNPY00wTVY2emJoaUFIdEtWQWcqAggI\"},\"clientScreenNonce\":\"MC4yNjkyMzQxNTQ0ODE2MDM5\"},\"challenge\":\"a=5&a2=3&b=MMa57GUKu9MfMzIigBiTDyXPDdw&c=1610298414&d=62&e3=UCqG93OcM0MV6zbhiAHtKVAg&c1a=1&hh=SULYYeKhkdtV3XiBO3vr-hU_WCX7J72J40iyTGXYV8Y\",\"botguardResponse\":\"!6eql6sPNAAXj0ixo40KgtZ5S6YUX0ljUTtJVpPQITAIAAACPUgAAAEpoAQcKABbEKzHxtW8TtNcFglFqbGBtWmJ7GCMbmQKuiLxNXyWs1e01AXlhrAEtAOxW_zq6lvfsGo3edNmrs931NPZ49UnZvAb7qVR0wKvEO2slaWYfTMRJ52WAm0Fl9XAXxKJFb7fohbF93FCgpr6xkiNMV5z_Ktb0Nb4gpUMf9bjHHy8ynu_-t9G73rSckVhBr00X5H1N7I7xrhgaJCoIXy-5uoUCONU1ekQEKIsMvHZgL1AUA7KHpi5uWmjqCPKLtSmtV8GuRX8QW7jguhpT5s4jfIbbcxqp1cXIaVjITJum7CeFSNdpIlUZa3diEEc0b7YHoKc8-0BYfGa9bKET6dDqVOGNEs6r6qe0UxeKPQ09WO-HfPN1uNvpCKcP_q-qY16CPv2lXrUnulK9rkdqJWbZZW9AKybYu1xieXcWhFwTXB5o-hgWXQtR9Q9AUH3EhxXxiZhdZyoR_QMDzhh753QGwNbeAjdXBNvotEnvRQ9G0fWVIhunEIaI35acsfgxahwQGD1DQfu8XG864n91JtP0l8I9xUIpBLTGWyQ_AOmOfEnybFNXX6IvR1ebMSHEx8gR5B6VeQ1KBtsBYngBZqLXH98PbKmWeKprcLtox1LZfQyeL-4Yhz7CtObaz_JOwwHP4qnfEuhNHtIPT5RnmjkLFOc_iZLklevLJonjAhit4zdAq42AyjPV47CUQCuggARvbNMb9ewBN7gUYOQ3J4Ym_e9TGVyhMqMW1kNVGThmGEc0VGnsYVtlCcBbxp5k9bT-liAxYnCb6s-yWGG51lZqV7usCmOnbA_oHqUABaPrbU4_WiS5OGFcuJKq2iGikaamHL9SzbdW9Gf-v04Bhb4RBS9Gljj8jtsIhXUVDrfd_UeFmY6OvnJlEHorJu7FfY6exxNefumrsH9KrB_TgboZ2KthUiRDke9LxfdVyMOA4bpDMYBOwBlRFlI\",\"xguardClientStatus\":0}",
+            body: `${JSON.stringify({
+                "context":{
+                   "client":{
+                      "clientName":62,
+                      "clientVersion":"1.20210104.03.01",
+                      "hl":"en-GB",
+                      "gl":"PL",
+                      "experimentsToken":"",
+                      "utcOffsetMinutes":60
+                   },
+                   "request":{
+                      "returnLogEntry":true,
+                      "internalExperimentFlags":[
+                         {
+                            "key":"force_route_delete_playlist_to_outertube",
+                            "value":"false"
+                         }
+                      ]
+                   },
+                   "user":{
+                      "onBehalfOfUser":"111199193633289494597",
+                      "delegationContext":{
+                         "externalChannelId":"UCqG93OcM0MV6zbhiAHtKVAg",
+                         "roleType":{
+                            "channelRoleType":"CREATOR_CHANNEL_ROLE_TYPE_OWNER"
+                         }
+                      },
+                      "serializedDelegationContext":"EhhVQ3FHOTNPY00wTVY2emJoaUFIdEtWQWcqAggI"
+                   },
+                   "clientScreenNonce":"MC4yNjkyMzQxNTQ0ODE2MDM5"
+                },
+                 "challenge": "a=5&a2=3&b=MMa57GUKu9MfMzIigBiTDyXPDdw&c=1610298414&d=62&e3=UCqG93OcM0MV6zbhiAHtKVAg&c1a=1&hh=SULYYeKhkdtV3XiBO3vr-hU_WCX7J72J40iyTGXYV8Y",
+                "botguardResponse": "!6eql6sPNAAXj0ixo40KgtZ5S6YUX0ljUTtJVpPQITAIAAACPUgAAAEpoAQcKABbEKzHxtW8TtNcFglFqbGBtWmJ7GCMbmQKuiLxNXyWs1e01AXlhrAEtAOxW_zq6lvfsGo3edNmrs931NPZ49UnZvAb7qVR0wKvEO2slaWYfTMRJ52WAm0Fl9XAXxKJFb7fohbF93FCgpr6xkiNMV5z_Ktb0Nb4gpUMf9bjHHy8ynu_-t9G73rSckVhBr00X5H1N7I7xrhgaJCoIXy-5uoUCONU1ekQEKIsMvHZgL1AUA7KHpi5uWmjqCPKLtSmtV8GuRX8QW7jguhpT5s4jfIbbcxqp1cXIaVjITJum7CeFSNdpIlUZa3diEEc0b7YHoKc8-0BYfGa9bKET6dDqVOGNEs6r6qe0UxeKPQ09WO-HfPN1uNvpCKcP_q-qY16CPv2lXrUnulK9rkdqJWbZZW9AKybYu1xieXcWhFwTXB5o-hgWXQtR9Q9AUH3EhxXxiZhdZyoR_QMDzhh753QGwNbeAjdXBNvotEnvRQ9G0fWVIhunEIaI35acsfgxahwQGD1DQfu8XG864n91JtP0l8I9xUIpBLTGWyQ_AOmOfEnybFNXX6IvR1ebMSHEx8gR5B6VeQ1KBtsBYngBZqLXH98PbKmWeKprcLtox1LZfQyeL-4Yhz7CtObaz_JOwwHP4qnfEuhNHtIPT5RnmjkLFOc_iZLklevLJonjAhit4zdAq42AyjPV47CUQCuggARvbNMb9ewBN7gUYOQ3J4Ym_e9TGVyhMqMW1kNVGThmGEc0VGnsYVtlCcBbxp5k9bT-liAxYnCb6s-yWGG51lZqV7usCmOnbA_oHqUABaPrbU4_WiS5OGFcuJKq2iGikaamHL9SzbdW9Gf-v04Bhb4RBS9Gljj8jtsIhXUVDrfd_UeFmY6OvnJlEHorJu7FfY6exxNefumrsH9KrB_TgboZ2KthUiRDke9LxfdVyMOA4bpDMYBOwBlRFlI",
+                "xguardClientStatus":0
+             })}`
+        })
+            .then(res => res.json())        
+
+       return console.log(token)
+
     let requestBody = _.cloneDeep(metadata_update_request_payload)
 
     _.set(requestBody, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
@@ -351,27 +418,88 @@ const edit_video_template = {
     }
 }
 
+// youtubei/v1/att/esr
+
 const metadata_update_request_payload = {
-    "encryptedVideoId": IT_WILL_BE_SET_DURING_REQUEST_BUILD,
+    "encryptedVideoId": "",
+    "videoReadMask": {},
     "monetizationSettings": {
-        "newMonetizeWithAds": true
+     "newMonetizeWithAds": true
     },
-    adFormats: {
-        newHasOverlayAds: "ENABLED",
-        newHasSkippableVideoAds: "DISABLED",
-        newHasNonSkippableVideoAds: "DISABLED",
-        newHasProductListingAds: "DISABLED"
+    "selfCertification": {
+     "newSelfCertificationData": {
+      "questionnaireAnswers": [
+       {
+        "question": "VIDEO_SELF_CERTIFICATION_QUESTION_PY",
+        "answer": "VIDEO_SELF_CERTIFICATION_ANSWER_SKIPPED"
+       },
+       {
+        "question": "VIDEO_SELF_CERTIFICATION_QUESTION_SC",
+        "answer": "VIDEO_SELF_CERTIFICATION_ANSWER_SKIPPED"
+       },
+       {
+        "question": "VIDEO_SELF_CERTIFICATION_QUESTION_VG",
+        "answer": "VIDEO_SELF_CERTIFICATION_ANSWER_SKIPPED"
+       },
+       {
+        "question": "VIDEO_SELF_CERTIFICATION_QUESTION_HD",
+        "answer": "VIDEO_SELF_CERTIFICATION_ANSWER_SKIPPED"
+       },
+       {
+        "question": "VIDEO_SELF_CERTIFICATION_QUESTION_DG",
+        "answer": "VIDEO_SELF_CERTIFICATION_ANSWER_SKIPPED"
+       },
+       {
+        "question": "VIDEO_SELF_CERTIFICATION_QUESTION_HH",
+        "answer": "VIDEO_SELF_CERTIFICATION_ANSWER_SKIPPED"
+       },
+       {
+        "question": "VIDEO_SELF_CERTIFICATION_QUESTION_FM",
+        "answer": "VIDEO_SELF_CERTIFICATION_ANSWER_SKIPPED"
+       },
+       {
+        "question": "VIDEO_SELF_CERTIFICATION_QUESTION_SE",
+        "answer": "VIDEO_SELF_CERTIFICATION_ANSWER_SKIPPED"
+       },
+       {
+        "question": "VIDEO_SELF_CERTIFICATION_QUESTION_SK",
+        "answer": "VIDEO_SELF_CERTIFICATION_ANSWER_SKIPPED"
+       }
+      ],
+      "certificationMethod": "VIDEO_SELF_CERTIFICATION_METHOD_DEFAULT_NONE",
+      "questionnaireVersion": "VIDEO_SELF_CERTIFICATION_QUESTIONNAIRE_VERSION_8"
+     }
     },
-    context: {
-        client: {
-            clientName: 62,
-            clientVersion: "1.20200406.02.01",
-        },
-        user: {
-            onBehalfOfUser: IT_WILL_BE_SET_DURING_REQUEST_BUILD
-        }
+    "context": {
+     "client": {
+      "clientName": 62,
+      "clientVersion": "1.20210104.03.01",
+      "hl": "en-GB",
+      "gl": "PL",
+      "experimentsToken": "",
+      "utcOffsetMinutes": 60
+     },
+     "request": {
+      "returnLogEntry": true,
+      "internalExperimentFlags": [],
+      "sessionInfo": {
+       "token": "AbX5usb75lHs81lLFrA9GnqLccj3pscTC2Hk0eds-u8I3T9LrPRLTVvgkbAH5phLxuXV2TWxagEYcotTZsNoUhLup4XUFQ=="
+       
+      }
+     },
+     "user": {
+      "onBehalfOfUser": "",
+      "delegationContext": {
+       "externalChannelId": "",
+       "roleType": {
+        "channelRoleType": "CREATOR_CHANNEL_ROLE_TYPE_OWNER"
+       }
+      },
+      "serializedDelegationContext": ""
+     },
+     "clientScreenNonce": ""
     }
-}
+   }
 
 const get_creator_endscreens_template = {
     "context": {
