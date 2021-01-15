@@ -54,7 +54,7 @@ describe('for authenticated user', () => {
             },
         })
 
-        // console.log(JSON.stringify(result, null, '\t'))
+        console.log(JSON.stringify(result, null, '\t'))
         expect(result.monetizationSettings.success).toEqual(true)
         expect(result.adFormats.success).toEqual(true)
         expect(result.adBreaks.success).toEqual(true)
