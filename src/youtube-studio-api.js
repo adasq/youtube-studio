@@ -119,13 +119,12 @@ async function getConfig() {
     return fetchConfig
 }
 
-async function setMonetisation(monetisationConfig) {
+async function setMonetisation(monetizationSettings) {
 
     let requestBody = _.cloneDeep(youtubei_v1_att_esr)
 
     _.set(requestBody, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
     _.set(requestBody, 'context.user.delegationContext.externalChannelId', config.CHANNEL_ID || "");
-
 
     const { sessionToken } = await fetch(`${YT_STUDIO_URL}/youtubei/v1/att/esr?alt=json&key=${config.INNERTUBE_API_KEY}`, {
         method: 'POST',
@@ -143,8 +142,7 @@ async function setMonetisation(monetisationConfig) {
         body: `${JSON.stringify(requestBody)}`
     })
         .then(res => res.json())
-
-
+        
     requestBody = _.cloneDeep(metadata_update_request_payload)
 
     _.set(requestBody, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
@@ -152,7 +150,7 @@ async function setMonetisation(monetisationConfig) {
 
     requestBody = {
         ...requestBody,
-        ...monetisationConfig
+        ...monetizationSettings
     }
 
     return fetch(`${YT_STUDIO_URL}/youtubei/v1/video_manager/metadata_update?alt=json&key=${config.INNERTUBE_API_KEY}`, {
@@ -473,9 +471,9 @@ const metadata_update_request_payload = {
             }
         },
         "user": {
-            "onBehalfOfUser": "",
+            "onBehalfOfUser": IT_WILL_BE_SET_DURING_REQUEST_BUILD,
             "delegationContext": {
-                "externalChannelId": "",
+                "externalChannelId": IT_WILL_BE_SET_DURING_REQUEST_BUILD,
                 "roleType": {
                     "channelRoleType": "CREATOR_CHANNEL_ROLE_TYPE_OWNER"
                 }

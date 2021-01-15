@@ -54,7 +54,6 @@ describe('for authenticated user', () => {
             },
         })
 
-        console.log(JSON.stringify(result, null, '\t'))
         expect(result.monetizationSettings.success).toEqual(true)
         expect(result.adFormats.success).toEqual(true)
         expect(result.adBreaks.success).toEqual(true)
@@ -63,12 +62,11 @@ describe('for authenticated user', () => {
 
     it('should unset monetisation', async () => {
         const result = await setMonetisation({
-            encryptedVideoId: LESS_THAN_10MIN_VIDEO_ID,
+            encryptedVideoId: VIDEO_ID,
             monetizationSettings: {
-                newMonetizeWithAds: true
+                newMonetizeWithAds: false
             }
         })
-
         expect(result.monetizationSettings.success).toEqual(true)
     })
 
@@ -79,7 +77,7 @@ describe('for authenticated user', () => {
 
         expect(video.videoId).toEqual(VIDEO_ID)
         expect(video.status).toEqual("VIDEO_STATUS_PROCESSED")
-        expect(video.monetization.adMonetization.effectiveStatus).toEqual("VIDEO_MONETIZING_STATUS_MONETIZING_WITH_LIMITED_ADS")
+        expect(video.monetization.adMonetization.effectiveStatus).toEqual("VIDEO_MONETIZING_STATUS_NOT_MONETIZING_OFF")
         expect(video.lengthSeconds).toEqual("1404")
         expect(video.watchUrl).toEqual("https://youtu.be/" + VIDEO_ID)
     })
@@ -152,7 +150,6 @@ describe('for authenticated user', () => {
             // newPrivacy: 'UNLISTED' // 'PUBLIC', 'PRIVATE'
             stream: require('fs').createReadStream(require('path').join(__dirname, '../', 'SampleVideo_360x240_2mb.mp4'))
          });
-        console.log(JSON.stringify(result))
         expect(result.videoId.length).toBeGreaterThan(0)
     })
 })
