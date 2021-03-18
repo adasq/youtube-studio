@@ -126,7 +126,7 @@ async function setMonetisation(monetizationSettings) {
     _.set(requestBody, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
     _.set(requestBody, 'context.user.delegationContext.externalChannelId', config.CHANNEL_ID || "");
 
-    const { sessionToken } = await fetch(`${YT_STUDIO_URL}/youtubei/v1/att/esr?alt=json&key=${config.INNERTUBE_API_KEY}`, {
+    let { sessionToken } = await fetch(`${YT_STUDIO_URL}/youtubei/v1/att/esr?alt=json&key=${config.INNERTUBE_API_KEY}`, {
         method: 'POST',
         headers: {
             "sec-ch-ua": "\"Google Chrome\";v=\"87\", \" Not;A Brand\";v=\"99\", \"Chromium\";v=\"87\"",
@@ -143,6 +143,7 @@ async function setMonetisation(monetizationSettings) {
     })
         .then(res => res.json())
         
+    sessionToken = 'AbX5usaVblZEZl2lczOwxAxUibNffJq4vqh58zeBJ1j_Iy4Izj-wFpOIaNmzkKVgpXJ1PL7DWz5rgkyX2QEUq5XOMc-EJw==';
     requestBody = _.cloneDeep(metadata_update_request_payload)
 
     _.set(requestBody, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
