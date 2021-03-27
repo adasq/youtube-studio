@@ -24,6 +24,7 @@ jobs:
           GOOGLE_COOKIE: ${{ secrets.GOOGLE_COOKIE }}
           PLAYLIST_ID: ${{ secrets.PLAYLIST_ID }}
           CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+          SESSION_TOKEN: ${{ secrets.SESSION_TOKEN }}
 
   publish-npm:
     needs: build
