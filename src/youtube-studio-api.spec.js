@@ -15,11 +15,11 @@ const {
 
 
 const VIDEO_ID = nconf.get('VIDEO_ID')
+const SESSION_TOKEN = nconf.get('SESSION_TOKEN')
 const CLAIMS_VIDEO_ID = nconf.get('CLAIMS_VIDEO_ID')
 const PLAYLIST_ID = nconf.get('PLAYLIST_ID')
 const CHANNEL_ID = nconf.get('CHANNEL_ID')
 const LESS_THAN_10MIN_VIDEO_ID = nconf.get('LESS_THAN_10MIN_VIDEO_ID');
-
 
 describe('for authenticated user', () => {
     jest.setTimeout(4 * 60 * 1000);
@@ -31,6 +31,7 @@ describe('for authenticated user', () => {
             SSID,
             APISID,
             SAPISID,
+            SESSION_TOKEN
         })
     })
 

@@ -18,6 +18,7 @@ let debug = {
     text: '',
     config: ''
 };
+let sessionToken = '';
 
 async function init({
     SID,
@@ -26,6 +27,7 @@ async function init({
     APISID,
     SAPISID,
     LOGIN_INFO,
+    SESSION_TOKEN = ''
 }) {
     const DATE = Date.now().toString();
 
@@ -40,6 +42,8 @@ async function init({
         'x-origin': YT_STUDIO_URL,
         'user-agent': USER_AGENT,
     }
+
+    sessionToken = SESSION_TOKEN;
 
     config = config || await getConfig();
 }
@@ -126,24 +130,23 @@ async function setMonetisation(monetizationSettings) {
     _.set(requestBody, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
     _.set(requestBody, 'context.user.delegationContext.externalChannelId', config.CHANNEL_ID || "");
 
-    let { sessionToken } = await fetch(`${YT_STUDIO_URL}/youtubei/v1/att/esr?alt=json&key=${config.INNERTUBE_API_KEY}`, {
-        method: 'POST',
-        headers: {
-            "sec-ch-ua": "\"Google Chrome\";v=\"87\", \" Not;A Brand\";v=\"99\", \"Chromium\";v=\"87\"",
-            "sec-ch-ua-mobile": "?0",
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
-            "x-goog-authuser": "0",
-            "x-goog-visitor-id": "Cgs0Z2JqQUVoMkg0RSil6Oz_BQ%3D%3D",
-            "x-origin": YT_STUDIO_URL,
-            ...headers
-        },
-        body: `${JSON.stringify(requestBody)}`
-    })
-        .then(res => res.json())
+    // let { sessionToken } = await fetch(`${YT_STUDIO_URL}/youtubei/v1/att/esr?alt=json&key=${config.INNERTUBE_API_KEY}`, {
+    //     method: 'POST',
+    //     headers: {
+    //         "sec-ch-ua": "\"Google Chrome\";v=\"87\", \" Not;A Brand\";v=\"99\", \"Chromium\";v=\"87\"",
+    //         "sec-ch-ua-mobile": "?0",
+    //         "sec-fetch-dest": "empty",
+    //         "sec-fetch-mode": "cors",
+    //         "sec-fetch-site": "same-origin",
+    //         "x-goog-authuser": "0",
+    //         "x-goog-visitor-id": "Cgs0Z2JqQUVoMkg0RSil6Oz_BQ%3D%3D",
+    //         "x-origin": YT_STUDIO_URL,
+    //         ...headers
+    //     },
+    //     body: `${JSON.stringify(requestBody)}`
+    // })
+    //     .then(res => res.json())
         
-    sessionToken = 'AbX5usaVblZEZl2lczOwxAxUibNffJq4vqh58zeBJ1j_Iy4Izj-wFpOIaNmzkKVgpXJ1PL7DWz5rgkyX2QEUq5XOMc-EJw==';
     requestBody = _.cloneDeep(metadata_update_request_payload)
 
     _.set(requestBody, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
