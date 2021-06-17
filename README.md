@@ -166,15 +166,17 @@ console.log(humanizedClaims) // ['"Fasl", by Kabul Dreams (starting at 2771 sec.
 #### STEP 1: Prepare cookies
 
 In order to authenticate you must provide cookie values after authenticating to https://studio.youtube.com/:
-- SID, 
-- HSID,
-- SSID,
-- APISID,
-- SAPISID
-- optionally LOGIN_INFO (If you have multiple YouTube accounts on the same email, you might also need to provide `LOGIN_INFO` cookie!)
-
-
+- `SID`, 
+- `HSID`,
+- `SSID`,
+- `APISID`,
+- `SAPISID`
 ![](docs/images/cookies.jpg)
+
+- optionally `LOGIN_INFO` (If you have multiple YouTube accounts on the same email, you might also need to provide `LOGIN_INFO` cookie!)
+- optionally `SESSION_TOKEN` (You will need it for `setMonetisation()` or `upload()` API), here is how to get your `SESSION_TOKEN`
+
+![](docs/images/sessionToken.png)
 
 #### STEP 2: Setup `youtube-studio`
 
@@ -187,7 +189,8 @@ await init({
     SSID,
     APISID,
     SAPISID,
-    LOGIN_INFO // this is optional! see Notes above
+    LOGIN_INFO,   // this is optional! see Notes above
+    SESSION_TOKEN // this is optional! see Notes above
 }) // you can authenticate once!
         
 const video = await getVideo('your video id')
