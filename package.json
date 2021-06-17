@@ -22,8 +22,8 @@
     ]
   },
   "dependencies": {
-    "cheerio": "1.0.0-rc.3",
-    "lodash": "4.17.20",
+    "cheerio": "^1.0.0-rc.10",
+    "lodash": "^4.17.21",
     "nconf": "0.11.0",
     "node-fetch": "2.6.1",
     "sha1": "1.1.1",
