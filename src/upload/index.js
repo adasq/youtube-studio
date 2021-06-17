@@ -25,7 +25,8 @@ async function upload(
         isDraft = false
     },
     headers,
-    config
+    config,
+    sessionToken
 ) {
 
     async function uploadFile(uploadUrl) {
@@ -66,7 +67,7 @@ async function upload(
 
     const scottyResourceId = await uploadFile(uploadUrl);
 
-    const createVideoBody = {
+    let createVideoBody = {
         "channelId": channelId,
         "resourceId": {
             "scottyResourceId": {
@@ -102,7 +103,7 @@ async function upload(
                 "returnLogEntry": true,
                 "internalExperimentFlags": [],
                 "sessionInfo": {
-                    "token": ""
+                    "token": sessionToken
                 }
             },
             "user": {

@@ -346,7 +346,7 @@ async function getEndScreen(videoId) {
 
 
 async function upload(options) {
-    return uploadFile(options, headers, config)
+    return uploadFile(options, headers, config, sessionToken)
 }
 
 const youtubei_v1_att_esr = {
