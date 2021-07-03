@@ -11,6 +11,7 @@ const {
     SSID,
     APISID,
     SAPISID,
+    VISITOR_INFO1_LIVE
 } = JSON.parse(nconf.get('GOOGLE_COOKIE'))
 
 
@@ -19,6 +20,8 @@ const SESSION_TOKEN = nconf.get('SESSION_TOKEN')
 const CLAIMS_VIDEO_ID = nconf.get('CLAIMS_VIDEO_ID')
 const PLAYLIST_ID = nconf.get('PLAYLIST_ID')
 const CHANNEL_ID = nconf.get('CHANNEL_ID')
+const botguardResponse = nconf.get('botguardResponse')
+const challenge = nconf.get('challenge')
 const LESS_THAN_10MIN_VIDEO_ID = nconf.get('LESS_THAN_10MIN_VIDEO_ID');
 
 describe('for authenticated user', () => {
@@ -31,7 +34,10 @@ describe('for authenticated user', () => {
             SSID,
             APISID,
             SAPISID,
-            SESSION_TOKEN
+            SESSION_TOKEN,
+            VISITOR_INFO1_LIVE,
+            botguardResponse,
+            challenge
         })
     })
 

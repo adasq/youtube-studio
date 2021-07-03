@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const sha1 = require('sha1');
 const _ = require('lodash');
 const cheerio = require('cheerio');
-const { VM } = require('vm2');
+const {VM} = require('vm2');
 
 const uploadFile = require('./upload');
 
@@ -19,21 +19,27 @@ let debug = {
     config: ''
 };
 let sessionToken = '';
+let botguardResponse, challenge;
 
 async function init({
-    SID,
-    HSID,
-    SSID,
-    APISID,
-    SAPISID,
-    LOGIN_INFO,
-    SESSION_TOKEN = ''
-}) {
+                        SID,
+                        HSID,
+                        SSID,
+                        APISID,
+                        SAPISID,
+                        LOGIN_INFO,
+                        SESSION_TOKEN = '',
+                        VISITOR_INFO1_LIVE,
+                        botguardResponse: _botguardResponse,
+                        challenge: _challenge
+                    }) {
     const DATE = Date.now().toString();
+    botguardResponse = _botguardResponse;
+    challenge = _challenge;
 
     const SAPISIDHASH = generateSAPISIDHASH(DATE, SAPISID)
 
-    const cookie = `SID=${SID}; HSID=${HSID}; SSID=${SSID}; APISID=${APISID}; SAPISID=${SAPISID}; ${LOGIN_INFO ? `LOGIN_INFO=${LOGIN_INFO}` : ''}`
+    const cookie = `SID=${SID}; HSID=${HSID}; SSID=${SSID}; APISID=${APISID}; SAPISID=${SAPISID}; ${LOGIN_INFO ? `LOGIN_INFO=${LOGIN_INFO}` : ''} ${VISITOR_INFO1_LIVE ? `VISITOR_INFO1_LIVE=${VISITOR_INFO1_LIVE}` : ''}`
 
     headers = {
         'authorization': `SAPISIDHASH ${SAPISIDHASH}`,
@@ -46,6 +52,34 @@ async function init({
     sessionToken = SESSION_TOKEN;
 
     config = config || await getConfig();
+
+    try {
+        if (botguardResponse && challenge) {
+            const requestBody = _.cloneDeep(youtubei_v1_att_esr)
+
+            _.set(requestBody, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
+            _.set(requestBody, 'context.user.delegationContext.externalChannelId', config.CHANNEL_ID || "");
+            _.set(requestBody, 'botguardResponse', botguardResponse || '');
+            _.set(requestBody, 'challenge', challenge || '');
+
+            const result = await fetch(`${YT_STUDIO_URL}/youtubei/v1/att/esr?alt=json&key=${config.INNERTUBE_API_KEY}`, {
+                method: 'POST',
+                headers: {
+                    ...headers,
+                    'x-goog-authuser': '0',
+                    'x-goog-visitor-id': config.VISITOR_DATA
+                },
+                body: `${JSON.stringify(requestBody)}`
+            })
+                .then(res => res.json())
+
+            if (result.sessionToken) {
+                console.log(result.sessionToken)
+                sessionToken = result.sessionToken
+            }
+        }
+    } catch (err) {
+    }
 }
 
 async function getMainPage() {
@@ -84,7 +118,8 @@ async function getConfig() {
     try {
         $ = cheerio.load(text);
         jsCode = $($('script')[0]).html();
-    } catch (err) { }
+    } catch (err) {
+    }
 
     if (!jsCode) {
         throw {
@@ -100,15 +135,17 @@ async function getConfig() {
 
     try {
         vm = new VM({
-            sandbox: { window: windowRef }
+            sandbox: {window: windowRef}
         });
         vm.run(`${jsCode}; window.ytcfg = ytcfg;`);
 
         fetchConfig = {
+            VISITOR_DATA: windowRef.ytcfg.data_.VISITOR_DATA,
             INNERTUBE_API_KEY: windowRef.ytcfg.data_.INNERTUBE_API_KEY,
             DELEGATED_SESSION_ID: windowRef.ytcfg.data_.DELEGATED_SESSION_ID,
         };
-    } catch (err) { }
+    } catch (err) {
+    }
 
     if (!fetchConfig) {
         throw {
@@ -124,29 +161,8 @@ async function getConfig() {
 }
 
 async function setMonetisation(monetizationSettings) {
+    let requestBody;
 
-    let requestBody = _.cloneDeep(youtubei_v1_att_esr)
-
-    _.set(requestBody, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
-    _.set(requestBody, 'context.user.delegationContext.externalChannelId', config.CHANNEL_ID || "");
-
-    // let { sessionToken } = await fetch(`${YT_STUDIO_URL}/youtubei/v1/att/esr?alt=json&key=${config.INNERTUBE_API_KEY}`, {
-    //     method: 'POST',
-    //     headers: {
-    //         "sec-ch-ua": "\"Google Chrome\";v=\"87\", \" Not;A Brand\";v=\"99\", \"Chromium\";v=\"87\"",
-    //         "sec-ch-ua-mobile": "?0",
-    //         "sec-fetch-dest": "empty",
-    //         "sec-fetch-mode": "cors",
-    //         "sec-fetch-site": "same-origin",
-    //         "x-goog-authuser": "0",
-    //         "x-goog-visitor-id": "Cgs0Z2JqQUVoMkg0RSil6Oz_BQ%3D%3D",
-    //         "x-origin": YT_STUDIO_URL,
-    //         ...headers
-    //     },
-    //     body: `${JSON.stringify(requestBody)}`
-    // })
-    //     .then(res => res.json())
-        
     requestBody = _.cloneDeep(metadata_update_request_payload)
 
     _.set(requestBody, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
@@ -304,7 +320,7 @@ async function setInfoCards(videoId, cards) {
     _.set(template, 'infoCardEdit.infoCards',
         cards.map(card => {
             if (card.playlistId) {
-                const { playlistId, customMessage, teaserText, teaserStartMs } = card;
+                const {playlistId, customMessage, teaserText, teaserStartMs} = card;
                 return {
                     "videoId": videoId,
                     "teaserStartMs": teaserStartMs || 0,
@@ -349,32 +365,34 @@ async function upload(options) {
     return uploadFile(options, headers, config, sessionToken)
 }
 
-const youtubei_v1_att_esr = {
+let youtubei_v1_att_esr = {
     "context": {
         "client": {
             "clientName": 62,
-            "clientVersion": "1.20210104.03.01",
+            "clientVersion": "1.20210630.03.00",
             "hl": "en-GB",
             "gl": "PL",
             "experimentsToken": "",
-            "utcOffsetMinutes": 60
+            "utcOffsetMinutes": 120
         },
         "request": {
             "returnLogEntry": true,
             "internalExperimentFlags": []
         },
         "user": {
-            "onBehalfOfUser": IT_WILL_BE_SET_DURING_REQUEST_BUILD,
+            "onBehalfOfUser": "",
             "delegationContext": {
-                "externalChannelId": IT_WILL_BE_SET_DURING_REQUEST_BUILD,
+                "externalChannelId": "",
                 "roleType": {
                     "channelRoleType": "CREATOR_CHANNEL_ROLE_TYPE_OWNER"
                 }
             },
+            "serializedDelegationContext": ""
         },
+        "clientScreenNonce": ""
     },
-    "challenge": "a=5&a2=3&b=MMa57GUKu9MfMzIigBiTDyXPDdw&c=1610298414&d=62&e3=UCqG93OcM0MV6zbhiAHtKVAg&c1a=1&hh=SULYYeKhkdtV3XiBO3vr-hU_WCX7J72J40iyTGXYV8Y",
-    "botguardResponse": "!6eql6sPNAAXj0ixo40KgtZ5S6YUX0ljUTtJVpPQITAIAAACPUgAAAEpoAQcKABbEKzHxtW8TtNcFglFqbGBtWmJ7GCMbmQKuiLxNXyWs1e01AXlhrAEtAOxW_zq6lvfsGo3edNmrs931NPZ49UnZvAb7qVR0wKvEO2slaWYfTMRJ52WAm0Fl9XAXxKJFb7fohbF93FCgpr6xkiNMV5z_Ktb0Nb4gpUMf9bjHHy8ynu_-t9G73rSckVhBr00X5H1N7I7xrhgaJCoIXy-5uoUCONU1ekQEKIsMvHZgL1AUA7KHpi5uWmjqCPKLtSmtV8GuRX8QW7jguhpT5s4jfIbbcxqp1cXIaVjITJum7CeFSNdpIlUZa3diEEc0b7YHoKc8-0BYfGa9bKET6dDqVOGNEs6r6qe0UxeKPQ09WO-HfPN1uNvpCKcP_q-qY16CPv2lXrUnulK9rkdqJWbZZW9AKybYu1xieXcWhFwTXB5o-hgWXQtR9Q9AUH3EhxXxiZhdZyoR_QMDzhh753QGwNbeAjdXBNvotEnvRQ9G0fWVIhunEIaI35acsfgxahwQGD1DQfu8XG864n91JtP0l8I9xUIpBLTGWyQ_AOmOfEnybFNXX6IvR1ebMSHEx8gR5B6VeQ1KBtsBYngBZqLXH98PbKmWeKprcLtox1LZfQyeL-4Yhz7CtObaz_JOwwHP4qnfEuhNHtIPT5RnmjkLFOc_iZLklevLJonjAhit4zdAq42AyjPV47CUQCuggARvbNMb9ewBN7gUYOQ3J4Ym_e9TGVyhMqMW1kNVGThmGEc0VGnsYVtlCcBbxp5k9bT-liAxYnCb6s-yWGG51lZqV7usCmOnbA_oHqUABaPrbU4_WiS5OGFcuJKq2iGikaamHL9SzbdW9Gf-v04Bhb4RBS9Gljj8jtsIhXUVDrfd_UeFmY6OvnJlEHorJu7FfY6exxNefumrsH9KrB_TgboZ2KthUiRDke9LxfdVyMOA4bpDMYBOwBlRFlI",
+    "botguardResponse": "",
+    "challenge": "",
     "xguardClientStatus": 0
 }
 
@@ -565,8 +583,8 @@ const get_creator_videos_template = {
         "responseStatus": {
             "all": true
         },
-        "monetization": { "all": true },
-        "visibility": { "all": true }
+        "monetization": {"all": true},
+        "visibility": {"all": true}
     }
 }
 
