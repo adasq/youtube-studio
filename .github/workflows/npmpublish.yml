@@ -20,11 +20,13 @@ jobs:
         env:
           VIDEO_ID: ${{ secrets.VIDEO_ID }}
           CLAIMS_VIDEO_ID: ${{ secrets.CLAIMS_VIDEO_ID }}
-          LESS_THAN_10MIN_VIDEO_ID: ${{ secrets.LESS_THAN_10MIN_VIDEO_ID }}
-          GOOGLE_COOKIE: ${{ secrets.GOOGLE_COOKIE }}
           PLAYLIST_ID: ${{ secrets.PLAYLIST_ID }}
           CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+          LESS_THAN_10MIN_VIDEO_ID: ${{ secrets.LESS_THAN_10MIN_VIDEO_ID }}
+          GOOGLE_COOKIE: ${{ secrets.GOOGLE_COOKIE }}
           SESSION_TOKEN: ${{ secrets.SESSION_TOKEN }}
+          botguardResponse: ${{ secrets.BOTGUARDRESPONSE }}
+          challenge: ${{ secrets.CHALLENGE }}
 
   publish-npm:
     needs: build
