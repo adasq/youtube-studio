@@ -137,7 +137,7 @@ async function getConfig() {
         vm = new VM({
             sandbox: {window: windowRef}
         });
-        vm.run(`${jsCode}; window.ytcfg = ytcfg;`);
+        vm.run(`window.ytcfg = {}; ${jsCode}; window.ytcfg = ytcfg;`);
 
         fetchConfig = {
             VISITOR_DATA: windowRef.ytcfg.data_.VISITOR_DATA,
