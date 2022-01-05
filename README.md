@@ -16,6 +16,7 @@ Set of features **limited** or **not provided** by official YouTube API
 - setting info cards
 - getting video claims
 - getting video details
+- setting video comment options
 
 ## Installation
 
