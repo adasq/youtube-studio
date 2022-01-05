@@ -171,12 +171,12 @@ await init({ ... }) // read more below (Preparing Authentication)
 
 const result = await setCommentOptions({
     encryptedVideoId: 'hHbWF1Bvgf4', // your video ID
-        commentOptions: {
-            newAllowCommentsMode: "ALL_COMMENTS", // or "AUTOMATED_COMMENTS" or "APPROVED_COMMENTS" or "UNKNOWN_COMMENT_ALLOWED_MODE",
-            newAllowComments: true, // should be "false" for newAllowCommentsMode="UNKNOWN_COMMENT_ALLOWED_MODE"
-            newCanViewRatings: true, // Show how many viewers like and dislike this video
-            newDefaultSortOrder: "MDE_COMMENT_SORT_ORDER_LATEST" // or "MDE_COMMENT_SORT_ORDER_TOP"
-        }
+    commentOptions: {
+        newAllowCommentsMode: "ALL_COMMENTS", // or "AUTOMATED_COMMENTS" or "APPROVED_COMMENTS" or "UNKNOWN_COMMENT_ALLOWED_MODE",
+        newAllowComments: true, // should be "false" for newAllowCommentsMode="UNKNOWN_COMMENT_ALLOWED_MODE"
+        newCanViewRatings: true, // Show how many viewers like and dislike this video
+        newDefaultSortOrder: "MDE_COMMENT_SORT_ORDER_LATEST" // or "MDE_COMMENT_SORT_ORDER_TOP"
+    }
 })
 
 console.log(result)
@@ -189,12 +189,12 @@ await init({ ... }) // read more below (Preparing Authentication)
 
 const result = await setCommentOptions({
     encryptedVideoId: 'hHbWF1Bvgf4',
-        commentOptions: {
-            newAllowCommentsMode: "UNKNOWN_COMMENT_ALLOWED_MODE",
-            newAllowComments: false,
-            newCanViewRatings: true, // Show how many viewers like and dislike this video
-            newDefaultSortOrder: "MDE_COMMENT_SORT_ORDER_LATEST"
-        }
+    commentOptions: {
+        newAllowCommentsMode: "UNKNOWN_COMMENT_ALLOWED_MODE",
+        newAllowComments: false,
+        newCanViewRatings: true, // Show how many viewers like and dislike this video
+        newDefaultSortOrder: "MDE_COMMENT_SORT_ORDER_LATEST"
+    }
 })
 
 console.log(result)
