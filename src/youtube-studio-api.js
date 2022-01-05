@@ -74,7 +74,6 @@ async function init({
                 .then(res => res.json())
 
             if (result.sessionToken) {
-                console.log(result.sessionToken)
                 sessionToken = result.sessionToken
             }
         }
@@ -181,6 +180,26 @@ async function setMonetisation(monetizationSettings) {
         .then(res => res.json())
 }
 
+async function setCommentOptions(data) {
+    let requestBody;
+
+    requestBody = _.cloneDeep(metadata_update_request_payload)
+
+    _.set(requestBody, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
+    _.set(requestBody, 'context.request.sessionInfo.token', sessionToken);
+
+    requestBody = {
+        ...requestBody,
+        ...data
+    }
+
+    return fetch(`${YT_STUDIO_URL}/youtubei/v1/video_manager/metadata_update?alt=json&key=${config.INNERTUBE_API_KEY}`, {
+        method: 'POST',
+        headers,
+        body: `${JSON.stringify(requestBody)}`
+    })
+        .then(res => res.json())
+}
 
 async function getVideoClaims(videoId) {
     const template = _.cloneDeep(get_creator_videos_template)
@@ -592,6 +611,7 @@ module.exports = {
     init,
     getVideo,
     setMonetisation,
+    setCommentOptions,
     setEndScreen,
     getEndScreen,
     endScreen,

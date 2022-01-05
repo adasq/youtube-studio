@@ -1,7 +1,7 @@
 jest.requireActual('node-fetch')
 const nconf = require('nconf')
 
-const { setMonetisation, init, setInfoCards, getVideo, setEndScreen, getEndScreen, endScreen, getVideoClaims, upload } = require('./youtube-studio-api');
+const { setMonetisation, setCommentOptions, init, setInfoCards, getVideo, setEndScreen, getEndScreen, endScreen, getVideoClaims, upload } = require('./youtube-studio-api');
 
 nconf.env().file({ file: './config.json' });
 
@@ -77,6 +77,20 @@ describe('for authenticated user', () => {
         expect(result.monetizationSettings.success).toEqual(true)
     })
 
+    it('should set comment options', async () => {
+        const result = await setCommentOptions({
+            encryptedVideoId: VIDEO_ID,
+            commentOptions: {
+                newAllowComments: true,
+                newAllowCommentsMode: "APPROVED_COMMENTS",
+                newCanViewRatings: true,
+                newDefaultSortOrder: "MDE_COMMENT_SORT_ORDER_LATEST"
+            }
+        })
+
+        expect(result.commentOptions.success).toEqual(true)
+    })
+
     it('should get video', async () => {
         const result = await getVideo(VIDEO_ID)
 
@@ -84,7 +98,7 @@ describe('for authenticated user', () => {
 
         expect(video.videoId).toEqual(VIDEO_ID)
         expect(video.status).toEqual("VIDEO_STATUS_PROCESSED")
-        expect(video.monetization.adMonetization.effectiveStatus).toEqual("VIDEO_MONETIZING_STATUS_NOT_MONETIZING_OFF")
+        expect(video.monetization.adMonetization.effectiveStatus).toEqual("VIDEO_MONETIZING_STATUS_MONETIZING_WITH_LIMITED_ADS")
         expect(video.lengthSeconds).toEqual("1404")
         expect(video.watchUrl).toEqual("https://youtu.be/" + VIDEO_ID)
     })
