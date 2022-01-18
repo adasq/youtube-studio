@@ -203,36 +203,54 @@ console.log(result)
 
 ## Preparing Authentication
 
-#### STEP 1: Prepare cookies
+#### 1. Authenticate to studio.youtube.com
 
-In order to authenticate you must provide cookie values after authenticating to https://studio.youtube.com/:
-- `SID`, 
-- `HSID`,
-- `SSID`,
-- `APISID`,
+It's recommended to do it in a browser's **private mode**.
+
+#### 2. Open dev tools and copy specific cookie values
+
+**IMPORTANT**: you need to filter cookies by `.youtube.com` domain.
+
+Here's a list of required cookies:
+- `SID`
+- `HSID`
+- `SSID`
+- `APISID`
 - `SAPISID`
+- `LOGIN_INFO` (if available)
+
+...like here:
+
 ![](docs/images/cookies.jpg)
 
-- optionally `LOGIN_INFO` (If you have multiple YouTube accounts on the same email, you might also need to provide `LOGIN_INFO` cookie!)
-- optionally `SESSION_TOKEN` (You will need it for `setMonetisation()` or `upload()` API), here is how to get your `SESSION_TOKEN`
+#### 3. Get `SESSION_TOKEN`
+
+If you plan to use `setMonetisation()` or `upload()` functions, you need to have `SESSION_TOKEN`.
+
+**IMPORTANT**: Keep in mind, that you need to regenerate this value roughly each week.
+
+Use your dev tools to get the value of `SESSION_TOKEN`:
 
 ![](docs/images/sessionToken.png)
 
-#### STEP 2: Setup `youtube-studio`
+#### 4. Initialize your session:
 
 ```js
 const { init, getVideo } = require('youtube-studio')
 
-await init({
-    SID,
-    HSID,
-    SSID,
-    APISID,
-    SAPISID,
-    LOGIN_INFO,   // this is optional! see Notes above
-    SESSION_TOKEN // this is optional! see Notes above
-}) // you can authenticate once!
-        
-const video = await getVideo('your video id')
-console.log(video)
+(async () => {
+    await init({
+        SID,
+        HSID,
+        SSID,
+        APISID,
+        SAPISID,
+        LOGIN_INFO, // specify, if available in your cookies
+        SESSION_TOKEN // this is optional, see point 3. above
+    }) // you can authenticate once!
+
+    const video = await getVideo('your video id')
+    console.log(video)
+}())
+
 ```
