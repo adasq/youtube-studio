@@ -70,6 +70,7 @@ const result = await upload({
     stream: fs.createReadStream('./example=video.mp4'), // your video stream
 
     newTitle: 'new video 1', // optional, your video name
+    newDescription: 'Please, subscribe!', // optional, your video description
     newPrivacy: 'PRIVATE', // optional (PRIVATE by default), ('PUBLIC', 'UNLISTED', 'PRIVATE' options available)
     isDraft: false, // optional, video can be a draft (false by default)
 })
