@@ -100,7 +100,7 @@ describe('for authenticated user', () => {
         expect(video.status).toEqual("VIDEO_STATUS_PROCESSED")
         expect(video.monetization.adMonetization.effectiveStatus).toEqual("VIDEO_MONETIZING_STATUS_MONETIZING_WITH_LIMITED_ADS")
         expect(video.lengthSeconds).toEqual("1404")
-        expect(video.watchUrl).toEqual("https://youtu.be/" + VIDEO_ID)
+        expect(video.watchUrl).toEqual("https://www.youtube.com/watch?v=" + VIDEO_ID)
     })
 
     describe('info cards', () => {
