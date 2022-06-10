@@ -381,6 +381,21 @@ async function getEndScreen(videoId) {
 
 
 async function upload(options) {
+    // 
+    // @tyzesc
+    // 
+    // Fix GitHub issue #21
+    // https://github.com/adasq/youtube-studio/issues/21
+    // 
+    // Missing SESSION_TOKEN will make YouTube return 401 Unauthorized Error,
+    // and uploadFile pass null value to node-fetch and will cause error.
+    // 
+    if (typeof sessionToken !== 'string' || sessionToken.length === 0) {
+        throw {
+            text: 'Missing SESSION_TOKEN on init will cause Unauthorized Request. Please check your SESSION_TOKEN is set correctly in init function.'
+        }
+    }
+
     return uploadFile(options, headers, config, sessionToken)
 }
 
