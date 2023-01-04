@@ -107,6 +107,7 @@ describe('for authenticated user', () => {
 
     it('should list videos', async () => {
         const result = await getVideos(60)
+        console.log(result.videos.length)
         expect(result.videos.length).toBeGreaterThan(0)
     })
 
