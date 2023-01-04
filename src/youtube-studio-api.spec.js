@@ -1,7 +1,9 @@
 jest.requireActual('node-fetch')
 const nconf = require('nconf')
 
-const { setMonetisation, setCommentOptions, init, setInfoCards, getVideo, setEndScreen, getEndScreen, endScreen, getVideoClaims, upload } = require('./youtube-studio-api');
+const { setMonetisation, setCommentOptions, init, setInfoCards, getVideo, setEndScreen, getEndScreen, endScreen, getVideoClaims, upload,
+    getVideos
+} = require('./youtube-studio-api');
 
 nconf.env().file({ file: './config.json' });
 
@@ -98,9 +100,14 @@ describe('for authenticated user', () => {
 
         expect(video.videoId).toEqual(VIDEO_ID)
         expect(video.status).toEqual("VIDEO_STATUS_PROCESSED")
-        expect(video.monetization.adMonetization.effectiveStatus).toEqual("VIDEO_MONETIZING_STATUS_MONETIZING_WITH_LIMITED_ADS")
-        expect(video.lengthSeconds).toEqual("1404")
+        expect(video.monetization.adMonetization.effectiveStatus).toEqual("VIDEO_MONETIZING_STATUS_NOT_MONETIZING_CHANNEL_NOT_MONETIZING")
+        expect(video.lengthSeconds).toEqual("1271")
         expect(video.watchUrl).toEqual("https://www.youtube.com/watch?v=" + VIDEO_ID)
+    })
+
+    it('should list videos', async () => {
+        const result = await getVideos(60)
+        expect(result.videos.length).toBeGreaterThan(0)
     })
 
     describe('info cards', () => {

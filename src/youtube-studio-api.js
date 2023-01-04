@@ -142,6 +142,7 @@ async function getConfig() {
             VISITOR_DATA: windowRef.ytcfg.data_.VISITOR_DATA,
             INNERTUBE_API_KEY: windowRef.ytcfg.data_.INNERTUBE_API_KEY,
             DELEGATED_SESSION_ID: windowRef.ytcfg.data_.DELEGATED_SESSION_ID,
+            CHANNEL_ID: windowRef.ytcfg.data_.CHANNEL_ID
         };
     } catch (err) {
     }
@@ -226,6 +227,22 @@ async function getVideo(videoId) {
     _.set(template, 'videoIds[0]', videoId);
 
     return fetch(`${YT_STUDIO_URL}/youtubei/v1/creator/get_creator_videos?alt=json&key=${config.INNERTUBE_API_KEY}`, {
+        method: 'POST',
+        headers,
+        body: `${JSON.stringify(template)}`
+    })
+        .then(res => res.json())
+}
+
+async function getVideos(pageSize = 30) {
+    const template = list_creator_videos_template;
+
+
+    _.set(template, 'pageSize', pageSize);
+    _.set(template, 'context.user.delegationContext.externalChannelId', config.CHANNEL_ID);
+    _.set(template, 'filter.and.operands[0].channelIdIs.value', config.CHANNEL_ID);
+
+    return fetch(`${YT_STUDIO_URL}/youtubei/v1/creator/list_creator_videos?alt=json&key=${config.INNERTUBE_API_KEY}`, {
         method: 'POST',
         headers,
         body: `${JSON.stringify(template)}`
@@ -622,6 +639,80 @@ const get_creator_videos_template = {
     }
 }
 
+
+const list_creator_videos_template = {
+    "filter": {"and": {"operands": [{"channelIdIs": {"value": IT_WILL_BE_SET_DURING_REQUEST_BUILD}}, {"videoOriginIs": {"value": "VIDEO_ORIGIN_UPLOAD"}}]}},
+    "order": "VIDEO_ORDER_DISPLAY_TIME_DESC",
+    "pageSize": 30,
+    "mask": {
+        "channelId": true,
+        "videoId": true,
+        "lengthSeconds": true,
+        "livestream": {"all": true},
+        "publicLivestream": {"all": true},
+        "origin": true,
+        "premiere": {"all": true},
+        "publicPremiere": {"all": true},
+        "status": true,
+        "thumbnailDetails": {"all": true},
+        "title": true,
+        "draftStatus": true,
+        "downloadUrl": true,
+        "watchUrl": true,
+        "shareUrl": true,
+        "permissions": {"all": true},
+        "timeCreatedSeconds": true,
+        "timePublishedSeconds": true,
+        "privacy": true,
+        "contentOwnershipModelSettings": {"all": true},
+        "features": {"all": true},
+        "shorts": {"all": true},
+        "responseStatus": {"all": true},
+        "statusDetails": {"all": true},
+        "description": true,
+        "metrics": {"all": true},
+        "titleFormattedString": {"all": true},
+        "descriptionFormattedString": {"all": true},
+        "audienceRestriction": {"all": true},
+        "allRestrictions": {"all": true},
+        "inlineEditProcessingStatus": true,
+        "videoPrechecks": {"all": true},
+        "selfCertification": {"all": true},
+        "contentType": true,
+        "videoResolutions": {"all": true},
+        "scheduledPublishingDetails": {"all": true},
+        "visibility": {"all": true},
+        "privateShare": {"all": true},
+        "sponsorsOnly": {"all": true},
+        "unlistedExpired": true,
+        "videoTrailers": {"all": true},
+        "remix": {"isSource": true}
+    },
+    "context": {
+        "client": {
+            "clientName": 62,
+            "clientVersion": "1.20230102.03.00",
+            "hl": "en",
+            "gl": "PL",
+            "experimentsToken": "",
+            "utcOffsetMinutes": 60,
+            "userInterfaceTheme": "USER_INTERFACE_THEME_DARK",
+            "screenWidthPoints": 1920,
+            "screenHeightPoints": 714,
+            "screenPixelDensity": 1,
+            "screenDensityFloat": 1
+        },
+        "request": {"returnLogEntry": true, "internalExperimentFlags": []},
+        "user": {
+            "delegationContext": {
+                "externalChannelId": IT_WILL_BE_SET_DURING_REQUEST_BUILD,
+                "roleType": {"channelRoleType": "CREATOR_CHANNEL_ROLE_TYPE_OWNER"}
+            }, "serializedDelegationContext": ""
+        },
+        "clientScreenNonce": ""
+    }
+}
+
 module.exports = {
     init,
     getVideo,
@@ -631,6 +722,7 @@ module.exports = {
     getEndScreen,
     endScreen,
     getDebugInfo,
+    getVideos,
     setInfoCards,
     getVideoClaims,
     upload
