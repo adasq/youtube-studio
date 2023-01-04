@@ -107,6 +107,7 @@ describe('for authenticated user', () => {
 
     it('should list videos', async () => {
         const result = await getVideos(60)
+        console.log(result.videos.length)
         expect(result.videos.length).toBeGreaterThan(0)
     })
 
@@ -127,7 +128,7 @@ describe('for authenticated user', () => {
 
     describe('end screen', () => {
         it('should set end screen', async () => {
-            const videoLengthSec = 1404;
+            const videoLengthSec = 1271;
             const TWENTY_SEC_BEFORE_END_MS = (videoLengthSec - 20) * 1000
 
             const result = await setEndScreen(VIDEO_ID, TWENTY_SEC_BEFORE_END_MS, [

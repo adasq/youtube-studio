@@ -225,11 +225,11 @@ Here's a list of required cookies:
 
 #### 3. Get `SESSION_TOKEN`
 
-If you plan to use `setMonetisation()` or `upload()` functions, you need to have `SESSION_TOKEN`.
+If you plan to use `setMonetisation()` or `upload()` or `setEndScreen()` functions, you need to have `SESSION_TOKEN`.
 
-**IMPORTANT**: Keep in mind, that you need to regenerate this value roughly each week.
+**IMPORTANT**: Keep in mind, that you need to regenerate this value **each day**.
 
-Use your dev tools to get the value of `SESSION_TOKEN`:
+Use your dev tools to get the value of `SESSION_TOKEN` (`/grst` API):
 
 ![](docs/images/sessionToken.png)
 

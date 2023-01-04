@@ -241,6 +241,7 @@ async function getVideos(pageSize = 30) {
     _.set(template, 'pageSize', pageSize);
     _.set(template, 'context.user.delegationContext.externalChannelId', config.CHANNEL_ID);
     _.set(template, 'filter.and.operands[0].channelIdIs.value', config.CHANNEL_ID);
+    _.set(template, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
 
     return fetch(`${YT_STUDIO_URL}/youtubei/v1/creator/list_creator_videos?alt=json&key=${config.INNERTUBE_API_KEY}`, {
         method: 'POST',
@@ -341,6 +342,7 @@ async function setEndScreen(videoId, startMs, elements = []) {
 
     _.set(template, 'externalVideoId', videoId);
     _.set(template, 'context.user.onBehalfOfUser', config.DELEGATED_SESSION_ID);
+    _.set(template, 'context.request.sessionInfo.token', sessionToken);
 
     return fetch(`https://studio.youtube.com/youtubei/v1/video_editor/edit_video?alt=json&key=${config.INNERTUBE_API_KEY}`, {
         method: 'POST',
