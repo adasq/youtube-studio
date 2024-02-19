@@ -7,7 +7,7 @@ const {VM} = require('vm2');
 const uploadFile = require('./upload');
 
 const YT_STUDIO_URL = 'https://studio.youtube.com';
-const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36';
+const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36';
 const IT_WILL_BE_SET_DURING_REQUEST_BUILD = null;
 
 const generateSAPISIDHASH = (date, sapisid) => `${date}_${sha1(`${date} ${sapisid} ${YT_STUDIO_URL}`)}`
